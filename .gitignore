@@ -1,0 +1,19 @@
+# --- Frontend (React/Vite) ---
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.local
+frontend/*.log
+
+# --- Backend (Spring Boot) ---
+backend/target/
+backend/.mvn/
+backend/*.jar
+backend/*.war
+
+# --- General/IDE ---
+.idea/
+.vscode/
+*.swp
+*.DS_Store
+.env
