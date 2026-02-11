@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController()
@@ -45,8 +46,9 @@ public class JobPostController {
         return jobPostService.editJobPost(id, jobPostEditDto);
     }
     @DeleteMapping("/{id}/delete")
-    public JobPost deleteJobPost(@PathVariable Long id){
-        return jobPostService.deleteJobPost(id);
+    public Map<String, String> deleteJobPost(@PathVariable Long id){
+        jobPostService.deleteJobPost(id);
+        return Map.of("message", "Job post deleted successfully");
     }
 
     @PatchMapping("/{id}/togglestatus")
