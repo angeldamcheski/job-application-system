@@ -13,6 +13,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -43,15 +44,15 @@ public class JobPostServiceImpl implements JobPostService {
 
     @Override
     public JobPost createJobPost(JobPostCreateDTO jobPostCreateDto) {
-        List<String> processedTags = jobPostCreateDto.getJobTags().stream().flatMap(tag -> Arrays.stream(tag.split(","))).map(String::trim).toList();
+        List<String> processedTags = jobPostCreateDto==null? List.of() : jobPostCreateDto.getJobTags().stream().map(String::trim).toList();
         JobPost jobPost = new JobPost(
                 jobPostCreateDto.getTitle(),
                 jobPostCreateDto.getShortDescription(),
                 jobPostCreateDto.getFullDescription(),
                 processedTags,
                 jobPostCreateDto.getJobStatus(),
-                jobPostCreateDto.getCreationDate(),
-                jobPostCreateDto.getUpdateDate()
+                LocalDate.now(),
+                LocalDate.now()
         );
         jobPostRepository.save(jobPost);
         return jobPost;
@@ -80,7 +81,7 @@ public class JobPostServiceImpl implements JobPostService {
             jobPost.setCreationDate(jobPostEditDto.getCreatedDate());
         }
         if (jobPostEditDto.getUpdatedDate() != null) {
-            jobPost.setUpdateDate(jobPostEditDto.getUpdatedDate());
+            jobPost.setUpdateDate(LocalDate.now());
         }
 
         jobPostRepository.save(jobPost);

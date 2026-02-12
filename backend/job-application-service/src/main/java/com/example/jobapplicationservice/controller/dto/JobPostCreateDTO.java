@@ -15,9 +15,9 @@ public class JobPostCreateDTO {
     private List<String> jobTags;
     private JobStatus jobStatus;
 
-    @DateTimeFormat(pattern = "YYYY-mm-DD")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate creationDate;
-    @DateTimeFormat(pattern = "YYYY-mm-DD")
+    @DateTimeFormat(pattern = "YYYY-MM-dd")
     private LocalDate updateDate;
 
 }
