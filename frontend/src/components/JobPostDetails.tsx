@@ -88,7 +88,7 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
               shortDescription: selectedJobPost.shortDescription,
               fullDescription: selectedJobPost.fullDescription,
               jobTags: selectedJobPost.jobTags.join(", "),
-              jobStatus: selectedJobPost.jobStatus as JobStatus,
+              jobStatus: selectedJobPost.jobStatus,
             }}
           />
         </Modal>

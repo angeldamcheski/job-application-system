@@ -1,5 +1,4 @@
 import React from "react";
-import type { FormProps } from "antd";
 import { Form, Input, Select } from "antd";
 
 type JobStatus = "ACTIVE" | "INACTIVE";
