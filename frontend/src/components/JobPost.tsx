@@ -18,7 +18,6 @@ const JobPost: React.FC<JobPostProps> = ({
         tagString.split(",").map((t) => t.trim()),
       )
     : [];
-  console.log(tags);
   return (
     <div
       key={job.id}

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import type { JobPostType } from "../types/JobPostType";
 import { jobApi } from "../api/jobApi";
-import { Spin, Empty, Button, Modal, Form } from "antd";
+import { Spin, Empty, Button, Modal, Form, Select, Input, Space } from "antd";
 import JobPost from "../components/JobPost";
 import JobPostDetails from "../components/JobPostDetails";
 import CreateJobPost from "../components/CreateJobPost";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+const { Search } = Input;
 
 const JobListingsPage = () => {
   const queryClient = useQueryClient();
@@ -15,30 +16,54 @@ const JobListingsPage = () => {
   const [selectedJobPost, setSelectedJobPost] = useState<JobPostType | null>(
     null,
   );
+  const [selectedStatus, setSelectedStatus] = useState<string | undefined>(
+    undefined,
+  );
+  const [selectedTags, setSelectedTags] = useState<string[] | undefined>(
+    undefined,
+  );
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const {
-    data: jobPosts,
-    isFetching,
-    refetch,
-  } = useQuery({
-    queryKey: ["jobPosts"],
-    queryFn: jobApi.getAll,
-    enabled: true,
-    initialData: [],
-    refetchOnWindowFocus: true,
-  });
+  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ["jobPosts", selectedStatus, selectedTags],
+      queryFn: ({ pageParam = undefined }) =>
+        jobApi.getAllInfinite({
+          lastId: pageParam,
+          size: 5,
+          jobStatus: selectedStatus,
+          jobTags: selectedTags,
+        }),
+      initialPageParam: undefined,
+      getNextPageParam: (lastPage) => {
+        if (!lastPage || lastPage.length === 0) return undefined;
+        return lastPage[lastPage.length - 1].id;
+      },
+    });
+  const jobPosts = data?.pages.flat() || [];
 
   useEffect(() => {
-    setSelectedJobPost(jobPosts[0]);
-  }, [jobPosts]);
+    const delayFn = setTimeout(() => {
+      setSelectedTags(
+        searchTerm ? searchTerm.split(",").map((t) => t.trim()) : undefined,
+      );
+    }, 600);
+    return () => clearTimeout(delayFn);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    if (jobPosts.length > 0 && selectedJobPost === null) {
+      setSelectedJobPost(jobPosts[0]);
+    }
+  }, [data]);
 
   const handleDeleteJob = async (id: number) => {
     try {
       await jobApi.delete(id);
-      refetch();
       if (selectedJobPost?.id === id) {
         setSelectedJobPost(null);
       }
+      queryClient.invalidateQueries({ queryKey: ["jobPosts"], exact: false });
     } catch (error) {
       console.log("Failed to delete job: " + error);
     }
@@ -66,12 +91,7 @@ const JobListingsPage = () => {
       console.log(newJob);
       const created = await jobApi.create(newJob);
 
-      // setJobPosts((prev) => [...prev, created]);
-      queryClient.setQueryData(["jobPosts"], (prev: JobPostType[]) => {
-        // oldData is the previous cached data for this query
-        // Return the updated data
-        return [...prev, created];
-      });
+      queryClient.invalidateQueries({ queryKey: ["jobPosts"], exact: false });
       setSelectedJobPost(created);
 
       form.resetFields();
@@ -87,13 +107,7 @@ const JobListingsPage = () => {
   ) => {
     try {
       const edited = await jobApi.edit(id, updatedJob);
-      // setJobPosts((prev) => prev.map((job) => (job.id === id ? edited : job)));
-
-      queryClient.setQueryData(["jobPosts"], (prev: JobPostType[]) => {
-        // oldData is the previous cached data for this query
-        // Return the updated data
-        return prev.map((job) => (job.id === id ? edited : job));
-      });
+      queryClient.invalidateQueries({ queryKey: ["jobPosts"], exact: false });
       if (selectedJobPost?.id === id) setSelectedJobPost(edited);
     } catch (err) {
       console.error("Failed to edit job", err);
@@ -121,7 +135,24 @@ const JobListingsPage = () => {
                   Post a job
                 </Button>
               </div>
+              <Space direction="vertical" className="w-full p-3" size="small">
+                <Select
+                  placeholder="Filter by Status"
+                  className="w-full"
+                  allowClear
+                  onChange={(val) => setSelectedStatus(val)}
+                >
+                  <Select.Option value="ACTIVE">Active</Select.Option>
+                  <Select.Option value="INACTIVE">Inactive</Select.Option>
+                </Select>
 
+                <Search
+                  placeholder="Search tags (e.g. Java, React)"
+                  allowClear
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  loading={isFetching}
+                />
+              </Space>
               {jobPosts.length === 0 ? (
                 <div className="flex h-max items-center justify-center p-4">
                   <Empty description="No job posts available" />
@@ -136,6 +167,21 @@ const JobListingsPage = () => {
                   />
                 ))
               )}
+              <div className="p-4 flex justify-center">
+                {hasNextPage ? (
+                  <Button
+                    onClick={() => fetchNextPage()}
+                    loading={isFetchingNextPage}
+                    className="w-full"
+                  >
+                    Load More
+                  </Button>
+                ) : (
+                  <span className="text-slate-400 text-xs">
+                    All jobs loaded
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* RIGHT COLUMN: Job Details */}

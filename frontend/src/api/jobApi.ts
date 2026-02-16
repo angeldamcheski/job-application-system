@@ -13,7 +13,25 @@ export const jobApi = {
     const { data } = await api.get<JobPostType[]>("");
     return data;
   },
-
+  getAllInfinite: async ({
+    lastId,
+    size = 10,
+    jobStatus,
+    jobTags,
+  }: {
+    lastId?: number;
+    size?: number;
+    jobStatus?: string;
+    jobTags?: string[];
+  }): Promise<JobPostType[]> => {
+    const params = new URLSearchParams();
+    if (lastId !== undefined) params.append("lastId", lastId.toString());
+    params.append("size", size.toString());
+    if (jobStatus) params.append("jobStatus", jobStatus);
+    jobTags?.forEach((tag) => params.append("jobTags", tag));
+    const { data } = await api.get<JobPostType[]>("", { params });
+    return data;
+  },
   getById: async (id: number): Promise<JobPostType> => {
     const { data } = await api.get<JobPostType>(`/${id}`);
     return data;

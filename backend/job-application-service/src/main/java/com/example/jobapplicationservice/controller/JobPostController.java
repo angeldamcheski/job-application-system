@@ -4,6 +4,7 @@ import com.example.jobapplicationservice.controller.dto.JobPostCreateDTO;
 import com.example.jobapplicationservice.controller.dto.JobPostEditDTO;
 import com.example.jobapplicationservice.controller.dto.JobPostFilterDTO;
 import com.example.jobapplicationservice.model.JobPost;
+import com.example.jobapplicationservice.model.enums.JobStatus;
 import com.example.jobapplicationservice.service.JobPostService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +23,11 @@ public class JobPostController {
     }
 
     @GetMapping()
-    public List<JobPost> listAllJobs(JobPostFilterDTO jobPostFilterDTO) throws Exception {
+    public List<JobPost> listAllJobs(@RequestParam(required = false) Long lastId, @RequestParam(defaultValue = "10")int size,
+                                     @RequestParam(required = false) JobStatus jobStatus, @RequestParam(required = false) List<String> jobTags) throws Exception {
 
-        List<JobPost> jobPosts = jobPostService.listJobPosts(jobPostFilterDTO);
+        JobPostFilterDTO jobPostFilterDTO = new JobPostFilterDTO(jobStatus, jobTags);
+        List<JobPost> jobPosts = jobPostService.listJobPosts(jobPostFilterDTO, lastId, size);
         if (jobPosts == null) {
             throw new Exception("Job posts are not available.");
         }

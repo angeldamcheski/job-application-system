@@ -9,14 +9,20 @@ import com.example.jobapplicationservice.model.enums.JobStatus;
 import com.example.jobapplicationservice.repository.JobPostRepository;
 import com.example.jobapplicationservice.repository.specifications.JobPostSpecifications;
 import com.example.jobapplicationservice.service.JobPostService;
+import jakarta.persistence.criteria.Join;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
+import jakarta.persistence.criteria.Predicate;
 
 @Service
 public class JobPostServiceImpl implements JobPostService {
@@ -28,12 +34,34 @@ public class JobPostServiceImpl implements JobPostService {
     }
 
     @Override
-    public List<JobPost> listJobPosts(JobPostFilterDTO jobPostFilterDTO) {
-        Specification<JobPost> spec = (root, query, cb) -> cb.conjunction();
-        if (jobPostFilterDTO != null) {
-            spec = spec.and(JobPostSpecifications.hasStatus(jobPostFilterDTO.getJobStatus())).and(JobPostSpecifications.hasAnyTag(jobPostFilterDTO.getJobTags()));
-        }
-        return jobPostRepository.findAll(spec);
+    public List<JobPost> listJobPosts(JobPostFilterDTO jobPostFilterDTO, Long lastId, int size) {
+        Specification<JobPost> spec = (root, query, cb) -> {
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (lastId != null) {
+                predicates.add(cb.lessThan(root.get("id"), lastId));
+            }
+
+            if (jobPostFilterDTO != null) {
+
+                if (jobPostFilterDTO.getJobStatus() != null) {
+                    predicates.add(cb.equal(root.get("jobStatus"), jobPostFilterDTO.getJobStatus()));
+                }
+
+                if (jobPostFilterDTO.getJobTags() != null && !jobPostFilterDTO.getJobTags().isEmpty()) {
+                    Join<JobPost, String> tagsJoin = root.join("jobTags");
+                    predicates.add(tagsJoin.in(jobPostFilterDTO.getJobTags()));
+                }
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+
+        Pageable pageable = PageRequest.of(0, size, Sort.by("id").descending());
+
+        return jobPostRepository.findAll(spec, pageable).getContent();
     }
 
 

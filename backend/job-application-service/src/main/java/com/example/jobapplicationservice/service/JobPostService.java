@@ -18,6 +18,6 @@ public interface JobPostService {
 
     String toggleJobStatus(Long id);
 
-    List<JobPost> listJobPosts(JobPostFilterDTO jobPostFilterDTO);
+    List<JobPost> listJobPosts(JobPostFilterDTO jobPostFilterDTO, Long lastId, int size);
 
 }
