@@ -107,6 +107,8 @@ const JobListingsPage = () => {
   ) => {
     try {
       const edited = await jobApi.edit(id, updatedJob);
+      console.log(updatedJob);
+
       queryClient.invalidateQueries({ queryKey: ["jobPosts"], exact: false });
       if (selectedJobPost?.id === id) setSelectedJobPost(edited);
     } catch (err) {

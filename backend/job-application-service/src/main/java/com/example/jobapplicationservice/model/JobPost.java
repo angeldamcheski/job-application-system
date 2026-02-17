@@ -31,7 +31,7 @@ public class JobPost {
     @Column(name = "post_short_description")
     private String shortDescription;
 
-    @Column(name = "post_full_description")
+    @Column(name = "post_full_description", length = 1000000)
     private String fullDescription;
 
 

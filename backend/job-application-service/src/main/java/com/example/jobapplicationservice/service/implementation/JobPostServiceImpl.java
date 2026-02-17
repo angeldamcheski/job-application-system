@@ -36,7 +36,7 @@ public class JobPostServiceImpl implements JobPostService {
     @Override
     public List<JobPost> listJobPosts(JobPostFilterDTO jobPostFilterDTO, Long lastId, int size) {
         Specification<JobPost> spec = (root, query, cb) -> {
-
+            query.distinct(true);
             List<Predicate> predicates = new ArrayList<>();
 
             if (lastId != null) {
@@ -51,7 +51,19 @@ public class JobPostServiceImpl implements JobPostService {
 
                 if (jobPostFilterDTO.getJobTags() != null && !jobPostFilterDTO.getJobTags().isEmpty()) {
                     Join<JobPost, String> tagsJoin = root.join("jobTags");
-                    predicates.add(tagsJoin.in(jobPostFilterDTO.getJobTags()));
+//                    predicates.add(tagsJoin.in(jobPostFilterDTO.getJobTags()));
+                    List<Predicate> tagPredicates = jobPostFilterDTO.getJobTags()
+                            .stream()
+                            .map(tag ->
+                                    cb.like(
+                                            cb.lower(tagsJoin),
+                                            "%" + tag.toLowerCase() + "%"
+                                    )
+                            )
+                            .toList();
+
+                    // Match ANY of the provided tags
+                    predicates.add(cb.or(tagPredicates.toArray(new Predicate[0])));
                 }
             }
 
@@ -108,9 +120,9 @@ public class JobPostServiceImpl implements JobPostService {
         if (jobPostEditDto.getCreatedDate() != null) {
             jobPost.setCreationDate(jobPostEditDto.getCreatedDate());
         }
-        if (jobPostEditDto.getUpdatedDate() != null) {
+
             jobPost.setUpdateDate(LocalDate.now());
-        }
+
 
         jobPostRepository.save(jobPost);
 
