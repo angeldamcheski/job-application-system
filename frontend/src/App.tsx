@@ -1,9 +1,10 @@
 import { Layout, Menu } from "antd";
+import { lazy } from "react";
 import HomePage from "./pages/HomePage";
 import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
-import JobListingsPage from "./pages/JobListingsPage";
-const { Header, Content } = Layout;
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+const JobListingsPage = lazy(() => import("./pages/JobListingsPage"));
+const { Header, Content } = Layout;
 
 // Create a client
 const queryClient = new QueryClient();

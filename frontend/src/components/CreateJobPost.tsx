@@ -1,6 +1,7 @@
 import React from "react";
 import type { FormProps } from "antd";
 import { Form, Input } from "antd";
+import type { FormInstance } from "antd";
 type FieldType = {
   title: string;
   shortDescription: string;
@@ -9,9 +10,8 @@ type FieldType = {
   jobStatus: string;
 };
 type Props = {
-  form: any;
+  form: FormInstance;
 };
-
 const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
   console.log("Success:", values);
 };

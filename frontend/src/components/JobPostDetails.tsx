@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, lazy } from "react";
 import type { JobPostType } from "../types/JobPostType";
 import { Button, Divider, Tag, Empty, Modal, Form } from "antd";
-import { CloseOutlined, EditOutlined } from "@ant-design/icons";
-import EditJobPost from "./EditJobPost";
-
+import CloseOutlined from "@ant-design/icons/CloseOutlined";
+import EditOutlined from "@ant-design/icons/EditOutlined";
+const EditJobPost = lazy(() => import("./EditJobPost"));
 type JobPostDetailsProp = {
   selectedJobPost: JobPostType | null;
   onClose: () => void;

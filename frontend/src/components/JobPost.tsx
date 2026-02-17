@@ -1,6 +1,6 @@
 import React from "react";
 import type { JobPostType } from "../types/JobPostType";
-import { Tag } from "antd";
+import Tag from "antd/es/tag";
 
 type JobPostProps = {
   job: JobPostType;
@@ -43,12 +43,21 @@ const JobPost: React.FC<JobPostProps> = ({
       <p className="text-sm text-slate-500 line-clamp-2 mb-2">
         {job.shortDescription}
       </p>
-      <div className="flex gap-1 flex-wrap">
-        {tags.map((tag) => (
+
+      <div className="flex flex-wrap gap-1">
+        {/* {tags.map((tag) => (
+          <Tag key={tag} className="text-[10px] m-0">
+            {tag}
+          </Tag>
+        ))} */}
+        {tags.slice(0, 2).map((tag) => (
           <Tag key={tag} className="text-[10px] m-0">
             {tag}
           </Tag>
         ))}
+        {tags.length > 2 && (
+          <Tag className="text-[10px] m-0">+{tags.length - 2}</Tag>
+        )}
       </div>
     </div>
   );

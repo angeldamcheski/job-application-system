@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy } from "react";
 import type { JobPostType } from "../types/JobPostType";
 import { jobApi } from "../api/jobApi";
 import { Spin, Empty, Button, Modal, Form, Select, Input, Space } from "antd";
 import JobPost from "../components/JobPost";
 import JobPostDetails from "../components/JobPostDetails";
-import CreateJobPost from "../components/CreateJobPost";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+const CreateJobPost = lazy(() => import("../components/CreateJobPost"));
 const { Search } = Input;
 
 const JobListingsPage = () => {
@@ -25,18 +25,19 @@ const JobListingsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
-    useInfiniteQuery({
+    useInfiniteQuery<JobPostType[]>({
       queryKey: ["jobPosts", selectedStatus, selectedTags],
-      queryFn: ({ pageParam = undefined }) =>
+      queryFn: ({ pageParam }) =>
         jobApi.getAllInfinite({
-          lastId: pageParam,
+          lastId: Number(pageParam) || undefined,
           size: 5,
           jobStatus: selectedStatus,
           jobTags: selectedTags,
         }),
+      refetchOnWindowFocus: false,
       initialPageParam: undefined,
       getNextPageParam: (lastPage) => {
-        if (!lastPage || lastPage.length === 0) return undefined;
+        if (!lastPage || lastPage.length === 0) return null;
         return lastPage[lastPage.length - 1].id;
       },
     });
