@@ -1,9 +1,14 @@
 package com.example.jobapplicationservice.model.base;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
 @Table(name = "tbl_users")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "dtype", discriminatorType = DiscriminatorType.STRING)
+//@Inheritance(strategy = InheritanceType.JOINED)
+@Data
 public class User {
 
     @Id
@@ -19,4 +24,7 @@ public class User {
 
     @Column(name="email_address")
     private String emailAddress;
+
+    @Column(name="phone_number")
+    private String phoneNumber;
 }

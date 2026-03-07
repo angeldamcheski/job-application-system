@@ -37,12 +37,12 @@ const JobListingsPage = () => {
       refetchOnWindowFocus: false,
       initialPageParam: undefined,
       getNextPageParam: (lastPage) => {
-        if (!lastPage || lastPage.length === 0) return null;
+        if (!lastPage || lastPage.length === 0) return undefined;
         return lastPage[lastPage.length - 1].id;
       },
     });
   const jobPosts = data?.pages.flat() || [];
-
+  console.log("Data return", jobPosts, hasNextPage);
   useEffect(() => {
     const delayFn = setTimeout(() => {
       setSelectedTags(

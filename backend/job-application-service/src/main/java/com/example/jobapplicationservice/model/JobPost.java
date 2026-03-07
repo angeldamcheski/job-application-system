@@ -1,6 +1,7 @@
 package com.example.jobapplicationservice.model;
 
 import com.example.jobapplicationservice.model.enums.JobStatus;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -63,9 +64,9 @@ public class JobPost {
 
 
     }
-//    @ManyToOne
-//    private Admin admin;
-    //TODO: Add List<Application> applications
+    @OneToMany(mappedBy = "jobPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Application> applications;
 
 
 //    @ManyToOne

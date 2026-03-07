@@ -1,8 +1,20 @@
 import React, { useState, lazy } from "react";
 import type { JobPostType } from "../types/JobPostType";
-import { Button, Divider, Tag, Empty, Modal, Form } from "antd";
+import {
+  Button,
+  Divider,
+  Tag,
+  Empty,
+  Modal,
+  Form,
+  notification,
+  Table,
+} from "antd";
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
 import EditOutlined from "@ant-design/icons/EditOutlined";
+import { applicationApi } from "../api/applicationApi";
+import { useQuery } from "@tanstack/react-query";
+import { data } from "react-router-dom";
 const EditJobPost = lazy(() => import("./EditJobPost"));
 type JobPostDetailsProp = {
   selectedJobPost: JobPostType | null;
@@ -10,7 +22,24 @@ type JobPostDetailsProp = {
   onDelete: (id: number) => void;
   onEdit: (id: number, updatedJob: Partial<JobPostType>) => void;
 };
-
+const applicationColumns = [
+  {
+    title: "Applicant Name",
+    dataIndex: ["applicant", "firstName"],
+    key: "firstName",
+  },
+  {
+    title: "Applicant Email",
+    dataIndex: ["applicant", "emailAddress"],
+    key: "emailAddress",
+  },
+  {
+    title: "Submitted Date",
+    dataIndex: "submittedDate",
+    key: "submittedDate",
+    render: (date: string) => new Date(date).toLocaleDateString(),
+  },
+];
 const JobPostDetails: React.FC<JobPostDetailsProp> = ({
   selectedJobPost,
   onClose,
@@ -27,11 +56,23 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
   const { confirm } = Modal;
   const [form] = Form.useForm();
   const [editing, setEditing] = useState(false);
+  const [showApplications, setShowApplications] = useState(false);
+  const [loadingApplications, setLoadingApplications] = useState(false);
   const tags: string[] = Array.isArray(selectedJobPost.jobTags)
     ? selectedJobPost.jobTags.flatMap((t) =>
         t.split(",").map((tag) => tag.trim()),
       )
     : [];
+  const {
+    data: applications,
+    refetch,
+    isLoading,
+  } = useQuery({
+    queryKey: ["applications", selectedJobPost.id],
+    queryFn: () => applicationApi.getAll(selectedJobPost.id),
+    enabled: false,
+  });
+  console.log("Applications render", applications);
   const handleDelete = () => {
     if (!selectedJobPost) return;
 
@@ -87,7 +128,8 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
               title: selectedJobPost.title,
               shortDescription: selectedJobPost.shortDescription,
               fullDescription: selectedJobPost.fullDescription,
-              jobTags: selectedJobPost.jobTags.join(", "),
+              // jobTags: selectedJobPost.jobTags.join(", "),
+              jobTags: (selectedJobPost.jobTags || []).join(", "),
               jobStatus: selectedJobPost.jobStatus,
             }}
           />
@@ -115,9 +157,57 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
           {new Date(selectedJobPost.updateDate).toLocaleDateString()}
         </span>
         <div className="mt-6 flex gap-3">
-          <Button type="primary" size="large" className="px-8">
+          <Button
+            type="primary"
+            size="large"
+            className="px-8"
+            onClick={async () => {
+              if (!selectedJobPost) return;
+
+              try {
+                const applicantId = 4;
+                await applicationApi.apply({
+                  jobPostId: selectedJobPost.id,
+                  applicantId,
+                });
+                notification.success({
+                  message: "Application submitted",
+                  description: `You have successfully applied for ${selectedJobPost.title}`,
+                });
+              } catch (err: any) {
+                console.log("Failed to apply for job", err);
+                notification.error({
+                  message: "Application failed",
+                  description: err.message,
+                });
+              }
+            }}
+          >
             Apply Now
           </Button>
+          <Button
+            size="large"
+            onClick={async () => {
+              setShowApplications(true);
+              await refetch();
+            }}
+          >
+            View Applications
+          </Button>
+          <Modal
+            title={`Applications for ${selectedJobPost.title}`}
+            open={showApplications}
+            onCancel={() => setShowApplications(false)}
+            footer={null}
+            width={800}
+          >
+            <Table
+              columns={applicationColumns}
+              dataSource={applications}
+              loading={isLoading}
+              rowKey={(record) => record.id}
+            />
+          </Modal>
           <Button size="large">Save</Button>
           <Button size="large" danger type="default" onClick={handleDelete}>
             Delete
