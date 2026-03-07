@@ -1,8 +1,8 @@
 package com.example.jobapplicationservice.service;
 
-import com.example.jobapplicationservice.controller.dto.JobPostCreateDTO;
-import com.example.jobapplicationservice.controller.dto.JobPostEditDTO;
-import com.example.jobapplicationservice.controller.dto.JobPostFilterDTO;
+import com.example.jobapplicationservice.controller.dto.JobPost.JobPostCreateDTO;
+import com.example.jobapplicationservice.controller.dto.JobPost.JobPostEditDTO;
+import com.example.jobapplicationservice.controller.dto.JobPost.JobPostFilterDTO;
 import com.example.jobapplicationservice.model.JobPost;
 
 import java.util.List;

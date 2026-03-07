@@ -1,4 +1,4 @@
-package com.example.jobapplicationservice.controller.dto;
+package com.example.jobapplicationservice.controller.dto.Applicant;
 
 import com.example.jobapplicationservice.model.enums.UserRole;
 import lombok.Data;

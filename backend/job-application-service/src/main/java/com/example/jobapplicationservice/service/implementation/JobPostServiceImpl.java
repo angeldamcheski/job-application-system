@@ -1,13 +1,12 @@
 package com.example.jobapplicationservice.service.implementation;
 
 
-import com.example.jobapplicationservice.controller.dto.JobPostCreateDTO;
-import com.example.jobapplicationservice.controller.dto.JobPostEditDTO;
-import com.example.jobapplicationservice.controller.dto.JobPostFilterDTO;
+import com.example.jobapplicationservice.controller.dto.JobPost.JobPostCreateDTO;
+import com.example.jobapplicationservice.controller.dto.JobPost.JobPostEditDTO;
+import com.example.jobapplicationservice.controller.dto.JobPost.JobPostFilterDTO;
 import com.example.jobapplicationservice.model.JobPost;
 import com.example.jobapplicationservice.model.enums.JobStatus;
 import com.example.jobapplicationservice.repository.JobPostRepository;
-import com.example.jobapplicationservice.repository.specifications.JobPostSpecifications;
 import com.example.jobapplicationservice.service.JobPostService;
 import jakarta.persistence.criteria.Join;
 import org.springframework.data.domain.PageRequest;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import jakarta.persistence.criteria.Predicate;

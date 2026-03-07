@@ -1,10 +1,9 @@
-package com.example.jobapplicationservice.controller.dto;
+package com.example.jobapplicationservice.controller.dto.Application;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Getter
 @Setter

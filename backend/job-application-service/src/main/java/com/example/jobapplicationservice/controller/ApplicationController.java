@@ -1,11 +1,12 @@
 package com.example.jobapplicationservice.controller;
 
-import com.example.jobapplicationservice.controller.dto.ApplicationFilterDTO;
-import com.example.jobapplicationservice.controller.dto.ApplicationViewDTO;
+import com.example.jobapplicationservice.controller.dto.Application.ApplicationFilterDTO;
+import com.example.jobapplicationservice.controller.dto.Application.ApplicationViewDTO;
 import com.example.jobapplicationservice.model.Application;
 import com.example.jobapplicationservice.model.dto.ApplicationDTO;
 import com.example.jobapplicationservice.service.ApplicationService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class ApplicationController {
         }
 
     }
+
 
     @GetMapping()
     public List<Application> listAll() {

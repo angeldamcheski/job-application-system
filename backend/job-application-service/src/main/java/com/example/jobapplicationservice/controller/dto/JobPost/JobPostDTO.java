@@ -1,4 +1,4 @@
-package com.example.jobapplicationservice.controller.dto;
+package com.example.jobapplicationservice.controller.dto.JobPost;
 
 import lombok.Data;
 

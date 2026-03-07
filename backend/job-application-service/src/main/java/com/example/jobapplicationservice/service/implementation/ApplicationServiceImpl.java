@@ -1,15 +1,14 @@
 package com.example.jobapplicationservice.service.implementation;
 
-import com.example.jobapplicationservice.controller.dto.ApplicantDTO;
-import com.example.jobapplicationservice.controller.dto.ApplicationFilterDTO;
-import com.example.jobapplicationservice.controller.dto.ApplicationViewDTO;
-import com.example.jobapplicationservice.controller.dto.JobPostDTO;
+import com.example.jobapplicationservice.controller.dto.Applicant.ApplicantDTO;
+import com.example.jobapplicationservice.controller.dto.Application.ApplicationFilterDTO;
+import com.example.jobapplicationservice.controller.dto.Application.ApplicationViewDTO;
+import com.example.jobapplicationservice.controller.dto.JobPost.JobPostDTO;
 import com.example.jobapplicationservice.model.Applicant;
 import com.example.jobapplicationservice.model.Application;
 import com.example.jobapplicationservice.model.JobPost;
 import com.example.jobapplicationservice.model.dto.ApplicationDTO;
 import com.example.jobapplicationservice.repository.ApplicationRepository;
-import com.example.jobapplicationservice.repository.JobPostRepository;
 import com.example.jobapplicationservice.repository.specifications.ApplicationSpecifications;
 import com.example.jobapplicationservice.service.ApplicantService;
 import com.example.jobapplicationservice.service.ApplicationService;

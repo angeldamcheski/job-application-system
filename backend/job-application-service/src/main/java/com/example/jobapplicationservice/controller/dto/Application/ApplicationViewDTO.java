@@ -1,5 +1,7 @@
-package com.example.jobapplicationservice.controller.dto;
+package com.example.jobapplicationservice.controller.dto.Application;
 
+import com.example.jobapplicationservice.controller.dto.Applicant.ApplicantDTO;
+import com.example.jobapplicationservice.controller.dto.JobPost.JobPostDTO;
 import lombok.Data;
 
 import java.time.LocalDate;
