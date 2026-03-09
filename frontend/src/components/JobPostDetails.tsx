@@ -15,6 +15,7 @@ import EditOutlined from "@ant-design/icons/EditOutlined";
 import { applicationApi } from "../api/applicationApi";
 import { useQuery } from "@tanstack/react-query";
 import { data } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 const EditJobPost = lazy(() => import("./EditJobPost"));
 type JobPostDetailsProp = {
   selectedJobPost: JobPostType | null;
@@ -54,6 +55,7 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
     );
   }
   const { confirm } = Modal;
+  const { user } = useAuth();
   const [form] = Form.useForm();
   const [editing, setEditing] = useState(false);
   const [showApplications, setShowApplications] = useState(false);
@@ -185,15 +187,18 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
           >
             Apply Now
           </Button>
-          <Button
-            size="large"
-            onClick={async () => {
-              setShowApplications(true);
-              await refetch();
-            }}
-          >
-            View Applications
-          </Button>
+          {user?.role === "ADMIN" && (
+            <Button
+              size="large"
+              onClick={async () => {
+                setShowApplications(true);
+                await refetch();
+              }}
+            >
+              View Applications
+            </Button>
+          )}
+
           <Modal
             title={`Applications for ${selectedJobPost.title}`}
             open={showApplications}

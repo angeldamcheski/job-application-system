@@ -5,12 +5,13 @@ import { Spin, Empty, Button, Modal, Form, Select, Input, Space } from "antd";
 import JobPost from "../components/JobPost";
 import JobPostDetails from "../components/JobPostDetails";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "../context/AuthContext";
 const CreateJobPost = lazy(() => import("../components/CreateJobPost"));
 const { Search } = Input;
 
 const JobListingsPage = () => {
   const queryClient = useQueryClient();
-
+  const { user } = useAuth();
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [selectedJobPost, setSelectedJobPost] = useState<JobPostType | null>(
@@ -116,6 +117,7 @@ const JobListingsPage = () => {
       console.error("Failed to edit job", err);
     }
   };
+  console.log("Printing user", user);
   return (
     <Spin spinning={isFetching}>
       <div className="flex w-full h-[calc(100vh-64px)] overflow-hidden bg-white py-2">
@@ -134,9 +136,11 @@ const JobListingsPage = () => {
             <div className="w-1/3 h-full overflow-y-auto border-r border-slate-200 bg-white">
               <div className="flex p-4 space-x-12 justify-center bg-white sticky top-0 z-10 border-b border-slate-100">
                 <h2 className="text-lg font-bold">Job Postings</h2>
-                <Button type="primary" size="medium" onClick={showModal}>
-                  Post a job
-                </Button>
+                {user?.role === "ADMIN" && (
+                  <Button type="primary" size="medium" onClick={showModal}>
+                    Post a job
+                  </Button>
+                )}
               </div>
               <Space direction="vertical" className="w-full p-3" size="small">
                 <Select

@@ -17,7 +17,7 @@ const AuthPage = () => {
         return await register({
           firstName,
           lastName,
-          emailAddress: values.email,
+          emailAddress: values.emailAddress,
           password: values.password,
         });
       }

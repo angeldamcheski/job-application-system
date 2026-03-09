@@ -7,6 +7,7 @@ import com.example.jobapplicationservice.model.JobPost;
 import com.example.jobapplicationservice.model.enums.JobStatus;
 import com.example.jobapplicationservice.service.JobPostService;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class JobPostController {
         this.jobPostService = jobPostService;
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping()
     public List<JobPost> listAllJobs(@RequestParam(required = false) Long lastId, @RequestParam(defaultValue = "10")int size,
                                      @RequestParam(required = false) JobStatus jobStatus, @RequestParam(required = false) List<String> jobTags) throws Exception {

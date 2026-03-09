@@ -22,11 +22,12 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String generateToken(User user) {
-        String role = user instanceof Admin ? "ADMIN" : "APPLICANT";
+        String role = user instanceof Admin ? "ROLE_ADMIN" : "ROLE_APPLICANT";
         Key key = Keys.hmacShaKeyFor(secretKey.getBytes());
 
         return Jwts.builder()
                 .setSubject(user.getEmailAddress())
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(key, SignatureAlgorithm.HS256)
