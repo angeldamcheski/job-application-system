@@ -34,3 +34,14 @@ export interface ApplicationFilterDTO {
   submittedFrom?: string;
   submittedTo?: string;
 }
+export interface JobPostSummary {
+  id: number;
+  title: string;
+}
+
+export interface ApplicationView {
+  id: number;
+  jobPost: JobPostSummary;
+  submittedDate: string;
+  // status can be added here if you add it to your Backend DTO
+}

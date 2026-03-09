@@ -3,6 +3,7 @@ import type {
   ApplicationDTO,
   ApplicationFilterDTO,
   ApplicationType,
+  ApplicationView,
 } from "../types/ApplicationType";
 
 const BASE_URL = "http://localhost:8080/api/applications";
@@ -49,6 +50,13 @@ export const applicationApi = {
     filterDTO: ApplicationFilterDTO,
   ): Promise<ApplicationType[]> => {
     const { data } = await api.get("/filter", { params: filterDTO });
+    return data;
+  },
+
+  getApplicantApplications: async (
+    applicantId: number,
+  ): Promise<ApplicationView[]> => {
+    const { data } = await api.get(`/applicant/${applicantId}`);
     return data;
   },
 };

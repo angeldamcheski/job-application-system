@@ -51,4 +51,9 @@ public class ApplicationController {
     public List<Application> filter(@ModelAttribute ApplicationFilterDTO filter) {
         return applicationService.filterApplications(filter);
     }
+    @PreAuthorize("hasRole('APPLICANT')")
+    @GetMapping("/applicant/{applicantId}")
+    public ResponseEntity<List<ApplicationViewDTO>> getApplicationsByApplicant(@PathVariable Long applicantId){
+        return ResponseEntity.ok(applicationService.listByApplicant(applicantId));
+    }
 }

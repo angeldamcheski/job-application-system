@@ -116,4 +116,14 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         return application;
     }
+
+    @Override
+    public List<ApplicationViewDTO> listByApplicant(Long applicantId) {
+        Applicant applicant = applicantService.getById(applicantId);
+        // You can either use a repository method or stream the applicant's list
+        return applicant.getApplications().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
 }

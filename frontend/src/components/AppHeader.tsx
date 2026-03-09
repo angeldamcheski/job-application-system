@@ -10,8 +10,24 @@ const AppHeader = () => {
   // Dropdown menu for logged-in user
   const userMenuItems = [
     {
+      key: "Profile",
+      label:
+        user?.role === "APPLICANT" ? (
+          <Link to="/profile">Profile</Link>
+        ) : (
+          <Link to="/admin/dashboard">Dashboard</Link>
+        ),
+    },
+    {
+      type: "divider",
+    },
+    {
       key: "logout",
-      label: <span onClick={logout}>Logout</span>,
+      label: (
+        <span onClick={logout} className="text-red-500">
+          Logout
+        </span>
+      ),
     },
   ];
 
