@@ -1,14 +1,24 @@
 import { useEffect, useState, lazy } from "react";
 import type { JobPostType } from "../types/JobPostType";
 import { jobApi } from "../api/jobApi";
-import { Spin, Empty, Button, Modal, Form, Select, Input, Space } from "antd";
+import {
+  Spin,
+  Empty,
+  Button,
+  Modal,
+  Form,
+  Select,
+  Input,
+  Space,
+  Typography,
+} from "antd";
 import JobPost from "../components/JobPost";
 import JobPostDetails from "../components/JobPostDetails";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthContext";
 const CreateJobPost = lazy(() => import("../components/CreateJobPost"));
 const { Search } = Input;
-
+const { Text } = Typography;
 const JobListingsPage = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
@@ -136,12 +146,18 @@ const JobListingsPage = () => {
             <div className="w-1/3 h-full overflow-y-auto border-r border-slate-200 bg-white">
               <div className="flex p-4 space-x-12 justify-center bg-white sticky top-0 z-10 border-b border-slate-100">
                 <h2 className="text-lg font-bold">Job Postings</h2>
+
                 {user?.role === "ADMIN" && (
                   <Button type="primary" size="medium" onClick={showModal}>
                     Post a job
                   </Button>
                 )}
               </div>
+              {!user && (
+                <Text disabled className="pl-3">
+                  You have to be logged in to apply for jobs
+                </Text>
+              )}
               <Space direction="vertical" className="w-full p-3" size="small">
                 <Select
                   placeholder="Filter by Status"

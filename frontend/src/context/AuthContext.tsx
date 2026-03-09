@@ -57,6 +57,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setToken(null);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    navigation.navigate("/auth");
   };
   return (
     <AuthContext.Provider value={{ user, token, login, register, logout }}>

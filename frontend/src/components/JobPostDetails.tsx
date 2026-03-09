@@ -14,7 +14,6 @@ import CloseOutlined from "@ant-design/icons/CloseOutlined";
 import EditOutlined from "@ant-design/icons/EditOutlined";
 import { applicationApi } from "../api/applicationApi";
 import { useQuery } from "@tanstack/react-query";
-import { data } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 const EditJobPost = lazy(() => import("./EditJobPost"));
 type JobPostDetailsProp = {
@@ -100,10 +99,12 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
           onClick={onClose}
           className="relative top-0 left-125 text-xl text-slate-400 hover:text-red-500 cursor-pointer p-2 rounded-full hover:bg-slate-100 transition-all"
         />
-        <EditOutlined
-          onClick={() => setEditing(true)}
-          className="relative top-39 left-117 cursor-pointer rounded-full p-2 hover:bg-slate-100 transition-all"
-        />
+        {user?.role === "ADMIN" && (
+          <EditOutlined
+            onClick={() => setEditing(true)}
+            className="relative top-39 left-117 cursor-pointer rounded-full p-2 hover:bg-slate-100 transition-all"
+          />
+        )}
         <Modal
           title="Edit Job Post"
           open={editing}
@@ -159,34 +160,42 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
           {new Date(selectedJobPost.updateDate).toLocaleDateString()}
         </span>
         <div className="mt-6 flex gap-3">
-          <Button
-            type="primary"
-            size="large"
-            className="px-8"
-            onClick={async () => {
-              if (!selectedJobPost) return;
+          {user?.role === "APPLICANT" && (
+            <Button
+              type="primary"
+              size="large"
+              className="px-8"
+              onClick={async () => {
+                if (!selectedJobPost) return;
+                if (!user) {
+                  notification.warning({
+                    message: "Not logged in",
+                    description: "Please log in to apply for this job",
+                  });
+                  return;
+                }
+                try {
+                  await applicationApi.apply({
+                    jobPostId: selectedJobPost.id,
+                    applicantId: user?.id,
+                  });
+                  notification.success({
+                    message: "Application submitted",
+                    description: `You have successfully applied for ${selectedJobPost.title}`,
+                  });
+                } catch (err: any) {
+                  console.log("Failed to apply for job", err);
+                  notification.error({
+                    message: "Application failed",
+                    description: err.message,
+                  });
+                }
+              }}
+            >
+              Apply Now
+            </Button>
+          )}
 
-              try {
-                const applicantId = 4;
-                await applicationApi.apply({
-                  jobPostId: selectedJobPost.id,
-                  applicantId,
-                });
-                notification.success({
-                  message: "Application submitted",
-                  description: `You have successfully applied for ${selectedJobPost.title}`,
-                });
-              } catch (err: any) {
-                console.log("Failed to apply for job", err);
-                notification.error({
-                  message: "Application failed",
-                  description: err.message,
-                });
-              }
-            }}
-          >
-            Apply Now
-          </Button>
           {user?.role === "ADMIN" && (
             <Button
               size="large"
@@ -213,10 +222,12 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
               rowKey={(record) => record.id}
             />
           </Modal>
-          <Button size="large">Save</Button>
-          <Button size="large" danger type="default" onClick={handleDelete}>
-            Delete
-          </Button>
+          {user?.role === "APPLICANT" && <Button size="large">Save</Button>}
+          {user?.role === "ADMIN" && (
+            <Button size="large" danger type="default" onClick={handleDelete}>
+              Delete
+            </Button>
+          )}
         </div>
       </div>
 

@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AppHeader from "./components/AppHeader";
+import { useAuth } from "./context/AuthContext";
 const JobListingsPage = lazy(() => import("./pages/JobListingsPage"));
 const AuthPage = lazy(() => import("./pages/AuthPage"));
 
@@ -11,7 +12,6 @@ const { Content } = Layout;
 
 // Create a client
 const queryClient = new QueryClient();
-
 function App() {
   return (
     <>
