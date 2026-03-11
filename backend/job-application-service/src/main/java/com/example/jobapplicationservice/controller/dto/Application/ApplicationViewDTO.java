@@ -2,6 +2,7 @@ package com.example.jobapplicationservice.controller.dto.Application;
 
 import com.example.jobapplicationservice.controller.dto.Applicant.ApplicantDTO;
 import com.example.jobapplicationservice.controller.dto.JobPost.JobPostDTO;
+import com.example.jobapplicationservice.model.enums.ApplicationStatus;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -13,4 +14,5 @@ public class ApplicationViewDTO {
     private ApplicantDTO applicant;
     private LocalDate submittedDate;
     private String preferredLanguage;
+    private ApplicationStatus applicationStatus;
 }

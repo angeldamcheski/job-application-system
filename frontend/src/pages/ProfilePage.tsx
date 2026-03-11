@@ -1,17 +1,31 @@
-import { Card, Table, Tag, Button, Typography, Space } from "antd";
-import { useNavigate } from "react-router-dom";
+import {
+  Card,
+  Table,
+  Tag,
+  Button,
+  Typography,
+  Space,
+  message,
+  Form,
+  Modal,
+  Input,
+} from "antd";
+import { data, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { EyeOutlined, UserOutlined } from "@ant-design/icons";
 import { applicationApi } from "../api/applicationApi";
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { applicantApi } from "../api/applicantApi";
 
 const { Title, Text } = Typography;
 
 const ProfilePage = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const navigate = useNavigate();
-
+  const queryClient = useQueryClient();
+  const [editOpen, setEditOpen] = useState(false);
+  const [form] = Form.useForm();
   const {
     data: applications,
     isLoading,
@@ -22,6 +36,23 @@ const ProfilePage = () => {
     queryFn: () => applicationApi.getApplicantApplications(user?.id),
     enabled: !!user?.id, // Only run the query if user.id exists
     staleTime: 1000 * 60 * 5, // Cache data for 5 minutes
+  });
+  const updateMutation = useMutation({
+    mutationFn: (data: any) => applicantApi.updateApplicant(user?.id, data),
+
+    onSuccess: (updatedUser) => {
+      message.success("Profile updated successfully");
+
+      queryClient.invalidateQueries({
+        queryKey: ["applications", user?.id],
+      });
+      updateUser(updatedUser);
+      setEditOpen(false);
+    },
+
+    onError: () => {
+      message.error("Failed to update profile");
+    },
   });
   // Columns for the applications table
   const columns = [
@@ -54,7 +85,7 @@ const ProfilePage = () => {
       ),
     },
   ];
-
+  console.log("User data pfp", user?.lastName);
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
       {/* User Info Header */}
@@ -69,6 +100,15 @@ const ProfilePage = () => {
             </Title>
             <Text type="secondary">{user?.emailAddress}</Text>
           </div>
+          <Button
+            type="primary"
+            onClick={() => {
+              form.setFieldsValue(user);
+              setEditOpen(true);
+            }}
+          >
+            Edit Profile
+          </Button>
         </div>
       </Card>
 
@@ -85,6 +125,47 @@ const ProfilePage = () => {
           locale={{ emptyText: "You haven't applied to any jobs yet." }}
         />
       </Card>
+      <Modal
+        title="Edit Profile"
+        open={editOpen}
+        onCancel={() => setEditOpen(false)}
+        onOk={() => form.submit()}
+        confirmLoading={updateMutation.isPending}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={(values) => updateMutation.mutate(values)}
+        >
+          <Form.Item
+            label="First Name"
+            name="firstName"
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="Last Name"
+            name="lastName"
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="Email"
+            name="emailAddress"
+            rules={[{ required: true, type: "email" }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Phone Number" name="phoneNumber">
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };

@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/jobposts").permitAll()
+                        .requestMatchers("/api/applicants/").hasAnyRole("APPLICANT", "ADMIN")
                         .requestMatchers("/api/applications/applicant/**").hasRole("APPLICANT")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/jobposts/create").hasRole("ADMIN")

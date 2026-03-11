@@ -8,6 +8,7 @@ import com.example.jobapplicationservice.model.Applicant;
 import com.example.jobapplicationservice.model.Application;
 import com.example.jobapplicationservice.model.JobPost;
 import com.example.jobapplicationservice.model.dto.ApplicationDTO;
+import com.example.jobapplicationservice.model.enums.ApplicationStatus;
 import com.example.jobapplicationservice.repository.ApplicationRepository;
 import com.example.jobapplicationservice.repository.specifications.ApplicationSpecifications;
 import com.example.jobapplicationservice.service.ApplicantService;
@@ -47,6 +48,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
+
     private ApplicationViewDTO mapToDTO(Application application) {
         ApplicationViewDTO dto = new ApplicationViewDTO();
 
@@ -66,7 +68,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         dto.setApplicant(applicantDTO);
 
         dto.setSubmittedDate(application.getSubmittedDate());
-
+        dto.setApplicationStatus(application.getApplicationStatus());
 
         return dto;
     }
@@ -104,14 +106,15 @@ public class ApplicationServiceImpl implements ApplicationService {
         JobPost job = jobPostService.getJobPost(applicationDTO.getJobPostId());
         Applicant applicant = applicantService.getById(applicationDTO.getApplicantId());
 
-        boolean hasApplied = applicationRepository.existsByJobPostAndApplicant(job,applicant);
-        if(hasApplied){
+        boolean hasApplied = applicationRepository.existsByJobPostAndApplicant(job, applicant);
+        if (hasApplied) {
             throw new IllegalStateException("You have already applied to this job.");
         }
         Application application = new Application();
         application.setJobPost(job);
         application.setApplicant(applicant);
         application.setSubmittedDate(LocalDate.now());
+        application.setApplicationStatus(ApplicationStatus.SUBMITTED);
         applicationRepository.save(application);
 
         return application;
@@ -124,6 +127,18 @@ public class ApplicationServiceImpl implements ApplicationService {
         return applicant.getApplications().stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Application updateApplicationStatus(Long applicationId, ApplicationStatus applicationStatus) {
+        Application application = applicationRepository.findById(applicationId).orElseThrow(() -> new RuntimeException("Application not found"));
+        application.setApplicationStatus(applicationStatus);
+        return applicationRepository.save(application);
+    }
+
+    @Override
+    public List<ApplicationViewDTO> listApplicationView() {
+        return applicationRepository.findAll().stream().map(this::mapToDTO).toList();
     }
 
 }

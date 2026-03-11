@@ -1,5 +1,6 @@
 package com.example.jobapplicationservice.controller;
 
+import com.example.jobapplicationservice.controller.dto.Application.ApplicationStatusUpdateDTO;
 import com.example.jobapplicationservice.model.Applicant;
 import com.example.jobapplicationservice.model.Application;
 import com.example.jobapplicationservice.controller.dto.Application.ApplicationViewDTO;
@@ -51,4 +52,15 @@ public class AdminController {
     public ResponseEntity<List<ApplicationViewDTO>> getUserApplications(@PathVariable Long userId) {
         return ResponseEntity.ok(applicationService.listByApplicant(userId));
     }
+
+    @PatchMapping("/{applicationId}/status")
+    public Application updateStatus(@PathVariable Long applicationId, @RequestBody ApplicationStatusUpdateDTO applicationStatusUpdateDTO){
+        return applicationService.updateApplicationStatus(applicationId, applicationStatusUpdateDTO.getStatus());
+    }
+
+    @GetMapping("/applications")
+    public ResponseEntity<List<ApplicationViewDTO>> getAllApplications(){
+        return ResponseEntity.ok(applicationService.listApplicationView());
+    }
+
 }

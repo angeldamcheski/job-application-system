@@ -1,9 +1,11 @@
 package com.example.jobapplicationservice.controller;
 
 import com.example.jobapplicationservice.controller.dto.Application.ApplicationFilterDTO;
+import com.example.jobapplicationservice.controller.dto.Application.ApplicationStatusUpdateDTO;
 import com.example.jobapplicationservice.controller.dto.Application.ApplicationViewDTO;
 import com.example.jobapplicationservice.model.Application;
 import com.example.jobapplicationservice.model.dto.ApplicationDTO;
+import com.example.jobapplicationservice.model.enums.ApplicationStatus;
 import com.example.jobapplicationservice.service.ApplicationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -56,4 +58,6 @@ public class ApplicationController {
     public ResponseEntity<List<ApplicationViewDTO>> getApplicationsByApplicant(@PathVariable Long applicantId){
         return ResponseEntity.ok(applicationService.listByApplicant(applicantId));
     }
+
+
 }

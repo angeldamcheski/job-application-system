@@ -9,6 +9,7 @@ import {
   Space,
   Avatar,
   Descriptions,
+  Modal,
 } from "antd";
 import {
   UserOutlined,
@@ -18,13 +19,18 @@ import {
 } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import { adminApi } from "../api/adminApi";
-
+import ApplicationKanban from "../components/ApplicationKanban";
 const { Title, Text } = Typography;
-
+const statusColors: Record<string, string> = {
+  SUBMITTED: "blue",
+  IN_REVIEW: "orange",
+  ACCEPTED: "green",
+  REJECTED: "red",
+};
 const AdminDashboardPage: React.FC = () => {
   const [pagination, setPagination] = useState({ current: 1, pageSize: 5 });
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
-
+  const [kanbanOpen, setKanbanOpen] = useState(false);
   // 1. Fetch Users Page
   const { data: pageData, isLoading: isUsersLoading } = useQuery({
     queryKey: ["admin", "users", pagination.current, pagination.pageSize],
@@ -37,6 +43,10 @@ const AdminDashboardPage: React.FC = () => {
     queryKey: ["admin", "user-apps", selectedUser?.id],
     queryFn: () => adminApi.getUserApplications(selectedUser?.id),
     enabled: !!selectedUser?.id,
+  });
+  const { data: applications, refetch: refetchApps } = useQuery({
+    queryKey: ["admin", "applications"],
+    queryFn: adminApi.getAllApplications,
   });
 
   const columns = [
@@ -75,13 +85,16 @@ const AdminDashboardPage: React.FC = () => {
     <div className="p-8 max-w-7xl mx-auto space-y-6">
       <header className="flex justify-between items-center">
         <div>
-          <Title level={2} className="!mb-0">
+          <Title level={2} className="mb-0!">
             Admin Management
           </Title>
           <Text type="secondary">
             Monitor registered applicants and their activity.
           </Text>
         </div>
+        <Button type="primary" onClick={() => setKanbanOpen(true)}>
+          Manage Applications
+        </Button>
       </header>
 
       <Card className="shadow-sm border-slate-100 rounded-xl">
@@ -151,7 +164,13 @@ const AdminDashboardPage: React.FC = () => {
                   {
                     title: "Status",
                     key: "status",
-                    render: () => <Tag color="blue">SUBMITTED</Tag>,
+                    render: (u) => (
+                      <Tag
+                        color={statusColors[u.applicationStatus] || "default"}
+                      >
+                        {u.applicationStatus}
+                      </Tag>
+                    ),
                   },
                 ]}
               />
@@ -159,6 +178,18 @@ const AdminDashboardPage: React.FC = () => {
           </div>
         )}
       </Drawer>
+      <Modal
+        title="Application Workflow"
+        open={kanbanOpen}
+        onCancel={() => setKanbanOpen(false)}
+        footer={null}
+        width={1200}
+      >
+        <ApplicationKanban
+          applications={applications || []}
+          refetch={refetchApps}
+        />
+      </Modal>
     </div>
   );
 };

@@ -51,9 +51,6 @@ public class ApplicantServiceImpl implements ApplicantService {
         if (applicantEditDto.getPhoneNumber() != null) {
             applicant.setPhoneNumber(applicantEditDto.getPhoneNumber());
         }
-        if (applicantEditDto.getRole() != null) {
-            applicant.setRole(applicantEditDto.getRole());
-        }
         return applicantRepository.save(applicant);
     }
 

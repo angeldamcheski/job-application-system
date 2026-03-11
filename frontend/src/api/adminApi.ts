@@ -36,4 +36,13 @@ export const adminApi = {
     const { data } = await api.get(`/users/${userId}/applications`);
     return data;
   },
+
+  getAllApplications: async (): Promise<ApplicationView[]> => {
+    const { data } = await api.get("/applications");
+    return data;
+  },
+
+  updateApplicationStatus: async (applicationId: number, status: string) => {
+    await api.patch(`/${applicationId}/status`, { status });
+  },
 };

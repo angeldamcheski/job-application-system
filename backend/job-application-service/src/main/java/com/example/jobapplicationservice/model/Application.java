@@ -1,5 +1,7 @@
 package com.example.jobapplicationservice.model;
 
+import com.example.jobapplicationservice.model.enums.ApplicationStatus;
+import com.example.jobapplicationservice.model.enums.JobStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -27,6 +29,9 @@ public class Application {
     @JoinColumn(name = "applicant_id")
     @JsonIgnore
     private Applicant applicant;
+
+    @Column(name = "application_status")
+    private ApplicationStatus applicationStatus;
 
     private LocalDate submittedDate;
 }

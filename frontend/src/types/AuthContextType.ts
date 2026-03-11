@@ -7,4 +7,5 @@ export type AuthContextType = {
   login: (dto: LoginDTO) => Promise<void>;
   register: (dto: RegisterDTO) => Promise<void>;
   logout: () => void;
+  updateUser: (userData: User) => void;
 };
