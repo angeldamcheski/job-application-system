@@ -74,8 +74,8 @@ const ApplicationKanban: React.FC<Props> = ({
   return (
     <>
       <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm mt-5 mb-5">
-        <Title level={5} style={{ margin: 0 }}>
-          Search Applicants
+        <Title level={5} style={{ margin: 0, fontSize: 15 }}>
+          Search Applicants by email address
         </Title>
         <Search
           placeholder="Search by applicant email..."
@@ -85,11 +85,11 @@ const ApplicationKanban: React.FC<Props> = ({
           loading={loading}
         />
       </div>
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-4 gap-4 h-120">
         {statuses.map((status) => (
           <div
             key={status}
-            className="bg-slate-50 rounded-lg p-3 min-h-100 "
+            className={`bg-slate-50/60 inset-shadow-sm/10 rounded-lg p-3 min-h-100 overflow-auto`}
             onDragOver={(e) => e.preventDefault()}
             onDrop={() => handleDrop(status)}
           >

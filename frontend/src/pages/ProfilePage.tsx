@@ -12,7 +12,7 @@ import {
 } from "antd";
 import { data, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { EyeOutlined, UserOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined, UserOutlined } from "@ant-design/icons";
 import { applicationApi } from "../api/applicationApi";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -78,7 +78,11 @@ const ProfilePage = () => {
         <Button
           type="link"
           icon={<EyeOutlined />}
-          onClick={() => navigate(`/profile/applications/${record.jobPost.id}`)}
+          onClick={() =>
+            navigate(`/profile/applications/${record.jobPost.id}`, {
+              state: { status: record.applicationStatus },
+            })
+          }
         >
           View Job
         </Button>
@@ -88,30 +92,37 @@ const ProfilePage = () => {
   console.log("User data pfp", user?.lastName);
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
-      {/* User Info Header */}
-      <Card className="shadow-sm border-slate-100" style={{ marginBottom: 20 }}>
-        <div className="flex items-center space-x-4">
-          <div className="bg-blue-100 p-4 rounded-full">
-            <UserOutlined className="text-2xl text-blue-600" />
+      <Card
+        className="inset-shadow-sm/20 border! border-neutral-800 bg-neutral-200/20! hover:bg-neutral-200/40! rounded-xl p-6 mb-6  transition-all duration-300"
+        style={{ marginBottom: 20 }}
+      >
+        <div className="flex items-center justify-between space-x-4">
+          <div className="shrink-0 bg-blue-100/20 border border-slate-400 p-5 rounded-full flex items-center justify-center">
+            <UserOutlined className="text-3xl text-blue-500" />
           </div>
-          <div>
-            <Title level={3} className="m-0">
+
+          {/* User Info */}
+          <div className="flex-1">
+            <Title level={3} className="m-0 text-slate-900">
               {user?.firstName} {user?.lastName}
             </Title>
-            <Text type="secondary">{user?.emailAddress}</Text>
+            <Text className="text-slate-200">{user?.emailAddress}</Text>
           </div>
+
+          {/* Edit Button */}
           <Button
             type="primary"
             onClick={() => {
               form.setFieldsValue(user);
               setEditOpen(true);
             }}
+            icon={<EditOutlined />}
+            className="flex items-center gap-1"
           >
             Edit Profile
           </Button>
         </div>
       </Card>
-
       {/* Applications Table */}
       <Card
         title={<span className="text-lg font-semibold">My Applications</span>}

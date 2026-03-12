@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
   Card,
@@ -25,7 +25,8 @@ const { Title, Paragraph, Text } = Typography;
 const AppliedJobDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const location = useLocation();
+  const applicationStatus = location.state?.status || "SUBMITTED";
   const {
     data: job,
     isLoading,
@@ -56,7 +57,56 @@ const AppliedJobDetailsPage = () => {
         }
       />
     );
-
+  const statusBanner = {
+    SUBMITTED: {
+      type: "info",
+      message: "Your application has been submitted.",
+      description: (
+        <span>
+          Your application for{" "}
+          <strong className="text-blue-600">{job.title}</strong> has been
+          received successfully. You will receive a confirmation email shortly.
+          Thank you for applying!
+        </span>
+      ),
+    },
+    IN_REVIEW: {
+      type: "warning",
+      message: "Your application is under review.",
+      description: (
+        <span>
+          Our team is reviewing your application for{" "}
+          <strong className="text-blue-600">{job.title}</strong>. This usually
+          takes 1–4 weeks depending on the number of applications. You’ll be
+          notified when there’s an update.
+        </span>
+      ),
+    },
+    ACCEPTED: {
+      type: "success",
+      message: "Congratulations! You were accepted.",
+      description: (
+        <span>
+          Great news! You have been accepted for the position{" "}
+          <strong className="text-blue-600">{job.title}</strong>. Check your
+          email for next steps, orientation details, and important deadlines.
+          Welcome aboard!
+        </span>
+      ),
+    },
+    REJECTED: {
+      type: "error",
+      message: "Unfortunately, your application was rejected.",
+      description: (
+        <span>
+          We’ve reviewed your application for{" "}
+          <strong className="text-blue-600">{job.title}</strong> and,
+          unfortunately, we will not be moving forward at this time. Thank you
+          for your effort and we wish you success in future applications.
+        </span>
+      ),
+    },
+  };
   return (
     <div className="max-w-5xl mx-auto p-6 animate-fadeIn">
       {/* Navigation */}
@@ -71,7 +121,7 @@ const AppliedJobDetailsPage = () => {
       </Breadcrumb>
 
       {/* Success Banner */}
-      <Alert
+      {/* <Alert
         title="You have already applied for this position"
         description={`Your application was received. You can review the job details below.`}
         type="success"
@@ -79,9 +129,17 @@ const AppliedJobDetailsPage = () => {
         closable
         icon={<CheckCircleOutlined />}
         className="mb-6 rounded-lg shadow-sm"
+        
+      /> */}
+      <Alert
+        title={statusBanner[applicationStatus].message}
+        type={statusBanner[applicationStatus].type}
+        description={statusBanner[applicationStatus].description}
+        showIcon
+        closable
+        className="mb-6 rounded-lg shadow-sm"
         style={{ marginBottom: 10 }}
       />
-
       <Card className="shadow-lg border-slate-100 rounded-xl overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
@@ -93,9 +151,9 @@ const AppliedJobDetailsPage = () => {
             </Text>
           </div>
           <div className="flex items-center gap-3">
-            <Tag color="blue" className="m-0 px-3 py-1 font-medium">
-              Applied
-            </Tag>
+            {/* <Tag color="blue" className="m-0 px-3 py-1 font-medium">
+              {applicationStatus}
+            </Tag> */}
           </div>
         </div>
 

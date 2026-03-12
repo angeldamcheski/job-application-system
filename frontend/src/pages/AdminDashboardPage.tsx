@@ -17,10 +17,12 @@ import {
   PhoneOutlined,
   EyeOutlined,
 } from "@ant-design/icons";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { adminApi } from "../api/adminApi";
 import ApplicationKanban from "../components/ApplicationKanban";
-import { applicationApi } from "../api/applicationApi";
+import ApplicationDetailsAdmin from "../components/ApplicationDetailsAdmin";
+import MetricCard from "../components/MetricCard";
+import { getMetrics } from "../utils/getMetrics";
 const { Title, Text } = Typography;
 const statusColors: Record<string, string> = {
   SUBMITTED: "blue",
@@ -34,6 +36,8 @@ const AdminDashboardPage: React.FC = () => {
   const [kanbanOpen, setKanbanOpen] = useState(false);
   const [emailFilter, setEmailFilter] = useState<string>("");
   const [innerEmailFilter, setInnerEmailFilter] = useState<string>("");
+  const [selectedApplication, setSelectedApplication] = useState(null);
+  const queryClient = useQueryClient();
   // 1. Fetch Users Page
   const { data: pageData, isLoading: isUsersLoading } = useQuery({
     queryKey: ["admin", "users", pagination.current, pagination.pageSize],
@@ -134,33 +138,51 @@ const AdminDashboardPage: React.FC = () => {
 
       {/* User Detail Drawer */}
       <Drawer
-        title="Applicant Profile & Applications"
-        width={600}
+        title={`${selectedUser?.firstName} ${selectedUser?.lastName}`}
+        size={600}
         onClose={() => setSelectedUser(null)}
         open={!!selectedUser}
-        destroyOnClose // Ensures fresh data for each user
+        destroyOnHidden
       >
         {selectedUser && (
-          <div className="space-y-8">
-            <Descriptions
-              title="Contact Information"
-              bordered
-              column={1}
-              size="small"
+          <div className="space-y-8 shadow-xl rounded-lg p-5">
+            <Card
+              className="rounded-xl shadow-sm p-4 space-y-4"
+              style={{ marginBottom: 32 }}
             >
-              <Descriptions.Item label="Full Name">{`${selectedUser.firstName} ${selectedUser.lastName}`}</Descriptions.Item>
-              <Descriptions.Item label="Email">
-                <MailOutlined className="mr-2" />
-                {selectedUser.emailAddress}
-              </Descriptions.Item>
-              <Descriptions.Item label="Phone">
-                <PhoneOutlined className="mr-2" />
-                {selectedUser.phoneNumber || "N/A"}
-              </Descriptions.Item>
-            </Descriptions>
+              <Title level={4}>
+                Metrics - {selectedUser?.firstName} {selectedUser?.lastName}
+              </Title>
+              <div className="grid grid-cols-2  gap-4">
+                {getMetrics(userApplications).map((metric) => (
+                  <MetricCard key={metric.label} {...metric} />
+                ))}
+              </div>
+            </Card>
+            <div className="inset-shadow-sm/20 bg-neutral-200/20 p-3 rounded-xl ">
+              <Descriptions
+                title="Contact Information"
+                bordered
+                column={1}
+                size="small"
+              >
+                <Descriptions.Item label="Full Name">{`${selectedUser.firstName} ${selectedUser.lastName}`}</Descriptions.Item>
+                <Descriptions.Item label="Email">
+                  <MailOutlined className="mr-2" />
+                  {selectedUser.emailAddress}
+                </Descriptions.Item>
+                <Descriptions.Item label="Phone">
+                  <PhoneOutlined className="mr-2" />
+                  {selectedUser.phoneNumber || "N/A"}
+                </Descriptions.Item>
+              </Descriptions>
+            </div>
 
-            <div>
-              <Title level={4}>Application History</Title>
+            <div className="shadow-md rounded-xl mt-5 p-3 bg-slate-100/20 border border-neutral-300/40">
+              <Title level={5}>
+                Application History for {selectedUser?.firstName}{" "}
+                {selectedUser?.lastName}
+              </Title>
               <Table
                 dataSource={userApplications || []}
                 loading={isAppsLoading}
@@ -191,13 +213,17 @@ const AdminDashboardPage: React.FC = () => {
                     ),
                   },
                 ]}
+                onRow={(record) => ({
+                  style: { cursor: "pointer" },
+                  onClick: () => setSelectedApplication(record),
+                })}
               />
             </div>
           </div>
         )}
       </Drawer>
       <Modal
-        title="Application Workflow"
+        title="Manage application status"
         open={kanbanOpen}
         onCancel={() => setKanbanOpen(false)}
         footer={null}
@@ -210,6 +236,27 @@ const AdminDashboardPage: React.FC = () => {
           loading={isFiltering}
         />
       </Modal>
+      {selectedApplication && (
+        <ApplicationDetailsAdmin
+          application={selectedApplication}
+          visible={!!selectedApplication}
+          onClose={() => setSelectedApplication(null)}
+          onStatusChange={(newStatus) => {
+            adminApi
+              .updateApplicationStatus(selectedApplication.id, newStatus)
+              .then(() => {
+                refetchApps(); // refresh table
+                queryClient.invalidateQueries({
+                  queryKey: ["admin", "applications"],
+                });
+                queryClient.invalidateQueries({
+                  queryKey: ["admin", "user-apps", selectedUser?.id],
+                });
+                setSelectedApplication(null);
+              });
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -43,5 +43,6 @@ export interface ApplicationView {
   id: number;
   jobPost: JobPostSummary;
   submittedDate: string;
+  applicationStatus: string;
   // status can be added here if you add it to your Backend DTO
 }
