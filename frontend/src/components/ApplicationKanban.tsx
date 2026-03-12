@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Card, Tag, Typography, message } from "antd";
 import { adminApi } from "../api/adminApi";
 import { useQueryClient } from "@tanstack/react-query";
+import Search from "antd/es/input/Search";
 const { Title, Text } = Typography;
 
 type Application = {
@@ -22,6 +23,8 @@ const statuses = ["SUBMITTED", "IN_REVIEW", "ACCEPTED", "REJECTED"];
 interface Props {
   applications: Application[];
   refetch: () => void;
+  onSearch: (value: string) => void;
+  loading: boolean;
 }
 
 const statusColors: Record<string, string> = {
@@ -31,7 +34,12 @@ const statusColors: Record<string, string> = {
   REJECTED: "red",
 };
 
-const ApplicationKanban: React.FC<Props> = ({ applications, refetch }) => {
+const ApplicationKanban: React.FC<Props> = ({
+  applications,
+  refetch,
+  onSearch,
+  loading,
+}) => {
   const queryClient = useQueryClient();
   const [draggedId, setDraggedId] = useState<number | null>(null);
 
@@ -64,43 +72,57 @@ const ApplicationKanban: React.FC<Props> = ({ applications, refetch }) => {
   }, {});
 
   return (
-    <div className="grid grid-cols-4 gap-4">
-      {statuses.map((status) => (
-        <div
-          key={status}
-          className="bg-slate-50 rounded-lg p-3 min-h-100 "
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={() => handleDrop(status)}
-        >
-          <Title level={5}>{status}</Title>
+    <>
+      <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm mt-5 mb-5">
+        <Title level={5} style={{ margin: 0 }}>
+          Search Applicants
+        </Title>
+        <Search
+          placeholder="Search by applicant email..."
+          allowClear
+          onSearch={onSearch}
+          style={{ width: 300 }}
+          loading={loading}
+        />
+      </div>
+      <div className="grid grid-cols-4 gap-4">
+        {statuses.map((status) => (
+          <div
+            key={status}
+            className="bg-slate-50 rounded-lg p-3 min-h-100 "
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={() => handleDrop(status)}
+          >
+            <Title level={5}>{status}</Title>
 
-          {grouped[status]?.map((app: Application) => (
-            <Card
-              key={app.id}
-              draggable
-              onDragStart={() => handleDragStart(app.id)}
-              size="small"
-              className="mb-2  cursor-move shadow-sm"
-              style={{ marginBottom: 10 }}
-            >
-              <Text strong>
-                {app.applicant.firstName} {app.applicant.lastName}
-              </Text>
+            {grouped[status]?.map((app: Application) => (
+              <Card
+                key={app.id}
+                draggable
+                onDragStart={() => handleDragStart(app.id)}
+                size="small"
+                className="mb-2  cursor-move shadow-sm"
+                style={{ marginBottom: 10 }}
+              >
+                <Text strong>
+                  {app.applicant.firstName} {app.applicant.lastName}
+                </Text>
 
-              <div>
-                <Text type="secondary">{app.jobPost.title}</Text>
-              </div>
+                <div>
+                  <Text type="secondary">{app.jobPost.title}</Text>
+                </div>
 
-              <div className="mt-2">
-                <Tag color={statusColors[app.applicationStatus]}>
-                  {app.applicationStatus}
-                </Tag>
-              </div>
-            </Card>
-          ))}
-        </div>
-      ))}
-    </div>
+                <div className="mt-2">
+                  <Tag color={statusColors[app.applicationStatus]}>
+                    {app.applicationStatus}
+                  </Tag>
+                </div>
+              </Card>
+            ))}
+          </div>
+        ))}
+      </div>
+    </>
   );
 };
 

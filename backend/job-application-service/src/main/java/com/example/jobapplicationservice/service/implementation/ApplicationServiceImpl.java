@@ -73,30 +73,67 @@ public class ApplicationServiceImpl implements ApplicationService {
         return dto;
     }
 
+    private Specification<Application> appendSpec(Specification<Application> base, Specification<Application> addition) {
+        return (base == null) ? Specification.where(addition) : base.and(addition);
+    }
+
     @Override
     public List<Application> filterApplications(ApplicationFilterDTO filter) {
-        Specification<Application> spec = Specification.where((Specification<Application>) null);
+//        Specification<Application> spec = Specification.where((Specification<Application>) null);
+//
+//        if (filter.getJobPostId() != null) {
+//            spec = spec.and(ApplicationSpecifications.filterByJobPost(filter.getJobPostId()));
+//        }
+//
+//        if (filter.getApplicantName() != null) {
+//            spec = spec.and(ApplicationSpecifications.filterByApplicantName(filter.getApplicantName()));
+//        }
+//        if (filter.getEmail() != null) {
+//            spec = spec.and(ApplicationSpecifications.filterByEmail(filter.getEmail()));
+//        }
+//        if (filter.getPreferredLanguage() != null) {
+//            spec = spec.and(ApplicationSpecifications.filterByPreferredLanguage(filter.getPreferredLanguage()));
+//        }
+//        if (filter.getSubmittedFrom() != null) {
+//            spec = spec.and(ApplicationSpecifications.filterDateCreated(filter.getSubmittedFrom()));
+//        }
+//        if (filter.getSubmittedTo() != null) {
+//            spec = spec.and(ApplicationSpecifications.filterDateUpdated(filter.getSubmittedTo()));
+//        }
+//
+//
+//        return applicationRepository.findAll(spec);
+
+        Specification<Application> spec = null;
 
         if (filter.getJobPostId() != null) {
-            spec = spec.and(ApplicationSpecifications.filterByJobPost(filter.getJobPostId()));
+            spec = appendSpec(spec, ApplicationSpecifications.filterByJobPost(filter.getJobPostId()));
         }
 
-        if (filter.getApplicantName() != null) {
-            spec = spec.and(ApplicationSpecifications.filterByApplicantName(filter.getApplicantName()));
+        if (filter.getApplicantName() != null && !filter.getApplicantName().isBlank()) {
+            spec = appendSpec(spec, ApplicationSpecifications.filterByApplicantName(filter.getApplicantName()));
         }
-        if (filter.getEmail() != null) {
-            spec = spec.and(ApplicationSpecifications.filterByEmail(filter.getEmail()));
+
+        if (filter.getEmail() != null && !filter.getEmail().isBlank()) {
+            spec = appendSpec(spec, ApplicationSpecifications.filterByEmail(filter.getEmail()));
         }
-        if (filter.getPreferredLanguage() != null) {
-            spec = spec.and(ApplicationSpecifications.filterByPreferredLanguage(filter.getPreferredLanguage()));
+
+        if (filter.getPreferredLanguage() != null && !filter.getPreferredLanguage().isBlank()) {
+            spec = appendSpec(spec, ApplicationSpecifications.filterByPreferredLanguage(filter.getPreferredLanguage()));
         }
+
         if (filter.getSubmittedFrom() != null) {
-            spec = spec.and(ApplicationSpecifications.filterDateCreated(filter.getSubmittedFrom()));
-        }
-        if (filter.getSubmittedTo() != null) {
-            spec = spec.and(ApplicationSpecifications.filterDateUpdated(filter.getSubmittedTo()));
+            spec = appendSpec(spec, ApplicationSpecifications.filterDateCreated(filter.getSubmittedFrom()));
         }
 
+        if (filter.getSubmittedTo() != null) {
+            spec = appendSpec(spec, ApplicationSpecifications.filterDateUpdated(filter.getSubmittedTo()));
+        }
+
+        // If spec is still null, just return all applications
+        if (spec == null) {
+            return applicationRepository.findAll();
+        }
 
         return applicationRepository.findAll(spec);
     }
@@ -139,6 +176,32 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public List<ApplicationViewDTO> listApplicationView() {
         return applicationRepository.findAll().stream().map(this::mapToDTO).toList();
+    }
+
+    @Override
+    public List<ApplicationViewDTO> filterApplicationViewDTO(ApplicationFilterDTO filter) {
+        List<Application> applications = filterApplications(filter);
+
+        return applications.stream().map(application -> {
+            ApplicationViewDTO dto = new ApplicationViewDTO();
+            dto.setId(application.getId());
+            dto.setSubmittedDate(application.getSubmittedDate());
+            dto.setApplicationStatus(application.getApplicationStatus());
+            ;
+
+            ApplicantDTO applicantDTO = new ApplicantDTO();
+            applicantDTO.setFirstName(application.getApplicant().getFirstName());
+            applicantDTO.setLastName(application.getApplicant().getLastName());
+            applicantDTO.setEmailAddress(application.getApplicant().getEmailAddress());
+
+            JobPostDTO jobPostDTO = new JobPostDTO();
+            jobPostDTO.setTitle(application.getJobPost().getTitle());
+
+            dto.setApplicant(applicantDTO);
+            dto.setJobPost(jobPostDTO);
+
+            return dto;
+        }).toList();
     }
 
 }

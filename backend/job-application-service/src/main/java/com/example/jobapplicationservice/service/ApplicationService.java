@@ -22,4 +22,6 @@ public interface ApplicationService {
     Application updateApplicationStatus(Long applicationId, ApplicationStatus applicationStatus);
 
     List<ApplicationViewDTO> listApplicationView();
+    List<ApplicationViewDTO> filterApplicationViewDTO(ApplicationFilterDTO filter);
+
 }

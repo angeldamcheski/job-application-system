@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   Card,
@@ -20,6 +20,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { adminApi } from "../api/adminApi";
 import ApplicationKanban from "../components/ApplicationKanban";
+import { applicationApi } from "../api/applicationApi";
 const { Title, Text } = Typography;
 const statusColors: Record<string, string> = {
   SUBMITTED: "blue",
@@ -31,6 +32,8 @@ const AdminDashboardPage: React.FC = () => {
   const [pagination, setPagination] = useState({ current: 1, pageSize: 5 });
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
   const [kanbanOpen, setKanbanOpen] = useState(false);
+  const [emailFilter, setEmailFilter] = useState<string>("");
+  const [innerEmailFilter, setInnerEmailFilter] = useState<string>("");
   // 1. Fetch Users Page
   const { data: pageData, isLoading: isUsersLoading } = useQuery({
     queryKey: ["admin", "users", pagination.current, pagination.pageSize],
@@ -44,9 +47,18 @@ const AdminDashboardPage: React.FC = () => {
     queryFn: () => adminApi.getUserApplications(selectedUser?.id),
     enabled: !!selectedUser?.id,
   });
-  const { data: applications, refetch: refetchApps } = useQuery({
-    queryKey: ["admin", "applications"],
-    queryFn: adminApi.getAllApplications,
+  const {
+    data: applications,
+    refetch: refetchApps,
+    isFetching: isFiltering,
+  } = useQuery({
+    queryKey: ["admin", "applications", innerEmailFilter],
+    queryFn: () => {
+      if (emailFilter.trim()) {
+        return adminApi.filter({ email: innerEmailFilter });
+      }
+      return adminApi.getAllApplications();
+    },
   });
 
   const columns = [
@@ -80,7 +92,13 @@ const AdminDashboardPage: React.FC = () => {
       ),
     },
   ];
-
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setInnerEmailFilter(emailFilter);
+    }, 400);
+    return () => clearTimeout(timeout);
+  }, [emailFilter]);
+  console.log("Email term, inner email term", emailFilter, innerEmailFilter);
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-6">
       <header className="flex justify-between items-center">
@@ -188,6 +206,8 @@ const AdminDashboardPage: React.FC = () => {
         <ApplicationKanban
           applications={applications || []}
           refetch={refetchApps}
+          onSearch={(val) => setEmailFilter(val)}
+          loading={isFiltering}
         />
       </Modal>
     </div>

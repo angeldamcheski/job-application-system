@@ -1,5 +1,6 @@
 package com.example.jobapplicationservice.controller;
 
+import com.example.jobapplicationservice.controller.dto.Application.ApplicationFilterDTO;
 import com.example.jobapplicationservice.controller.dto.Application.ApplicationStatusUpdateDTO;
 import com.example.jobapplicationservice.model.Applicant;
 import com.example.jobapplicationservice.model.Application;
@@ -62,5 +63,10 @@ public class AdminController {
     public ResponseEntity<List<ApplicationViewDTO>> getAllApplications(){
         return ResponseEntity.ok(applicationService.listApplicationView());
     }
+    @GetMapping("/applications/filter")
+    public ResponseEntity<List<ApplicationViewDTO>> filterApplications(
+            @ModelAttribute ApplicationFilterDTO filter) {
 
+        return ResponseEntity.ok(applicationService.filterApplicationViewDTO(filter));
+    }
 }

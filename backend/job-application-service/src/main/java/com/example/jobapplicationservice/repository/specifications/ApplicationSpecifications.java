@@ -15,7 +15,7 @@ public class ApplicationSpecifications {
         return (root, query, cb)->cb.like(cb.lower(root.get("applicant").get("firstName")), "%"+applicantName.toLowerCase()+"%");
     }
     public static Specification<Application> filterByEmail(String email){
-        return (root, query, cb) -> cb.equal(root.get("applicant").get("email"),email);
+        return (root, query, cb) -> cb.equal(root.get("applicant").get("emailAddress"),email);
     }
     public static Specification<Application> filterByPreferredLanguage(String preferredLanguage){
         return (root, query, cb)->cb.equal(root.get("preferredLanguage"), preferredLanguage);

@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { ApplicationView } from "../types/ApplicationType"; // Reuse your existing types
+import type { ApplicationFilterDTO, ApplicationType, ApplicationView } from "../types/ApplicationType"; // Reuse your existing types
 
 const API_BASE_URL = "http://localhost:8080/api/admin";
 
@@ -45,4 +45,10 @@ export const adminApi = {
   updateApplicationStatus: async (applicationId: number, status: string) => {
     await api.patch(`/${applicationId}/status`, { status });
   },
+  filter: async (
+      filterDTO: ApplicationFilterDTO,
+    ): Promise<ApplicationType[]> => {
+      const { data } = await api.get("/applications/filter", { params: filterDTO });
+      return data;
+    },
 };
