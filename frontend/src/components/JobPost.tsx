@@ -6,13 +6,16 @@ type JobPostProps = {
   job: JobPostType;
   selectedJobPost: JobPostType | null;
   onSelect: (job: JobPostType) => void;
+  appliedJobs?: number[]; // New prop to indicate which jobs the user has applied to
 };
 
 const JobPost: React.FC<JobPostProps> = ({
   job,
   selectedJobPost,
   onSelect,
+  appliedJobs = [],
 }) => {
+  const isApplied = appliedJobs.includes(job.id);
   const tags: string[] = Array.isArray(job.jobTags)
     ? job.jobTags.flatMap((tagString) =>
         tagString.split(",").map((t) => t.trim()),
@@ -26,7 +29,7 @@ const JobPost: React.FC<JobPostProps> = ({
         selectedJobPost?.id === job.id
           ? "bg-blue-50 border-l-4 border-l-blue-500"
           : "hover:bg-slate-50"
-      } `}
+      } ${isApplied ? "opacity-70" : ""}`} // Dim the card if the user has applied
     >
       <div className="flex justify-between items-start mb-1">
         <h3 className="font-semibold text-slate-900 flex-1 mr-2">
@@ -34,10 +37,15 @@ const JobPost: React.FC<JobPostProps> = ({
         </h3>
 
         <Tag
-          color={job.jobStatus === "ACTIVE" ? "green" : "volcano"}
+          color={
+            isApplied              ? "blue"
+              : job.jobStatus === "ACTIVE"
+              ? "green"
+              : "volcano"
+          }
           className="mr-0"
         >
-          {job.jobStatus}
+          {isApplied ? "APPLIED" : job.jobStatus}
         </Tag>
       </div>
       <p className="text-sm text-slate-500 line-clamp-2 mb-2">

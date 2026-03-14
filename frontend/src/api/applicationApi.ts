@@ -59,4 +59,9 @@ export const applicationApi = {
     const { data } = await api.get(`/applicant/${applicantId}`);
     return data;
   },
+
+  getAppliedJobIds: async (applicantId: number): Promise<number[]> => {
+    const { data } = await api.get(`/applicant/${applicantId}/job-ids`);
+    return data;
+  }
 };

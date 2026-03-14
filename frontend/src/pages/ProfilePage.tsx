@@ -17,6 +17,7 @@ import { applicationApi } from "../api/applicationApi";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { applicantApi } from "../api/applicantApi";
+import { cvApi } from "../api/cvApi";
 
 const { Title, Text } = Typography;
 
@@ -25,7 +26,35 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [editOpen, setEditOpen] = useState(false);
+  const [cvUrl, setCvUrl] = useState<string | null>(null);
+  const [isViewingCv, setIsViewingCv] = useState(false);
+  const [cvModalOpen, setCvModalOpen] = useState(false);
   const [form] = Form.useForm();
+  const handleViewCv = async () => {
+    if (!cvData?.id) return;
+
+    try {
+      setIsViewingCv(true);
+      const blob = await cvApi.downloadCvFile(cvData.id);
+      const url = URL.createObjectURL(blob);
+      console.log("BLOB DATA", blob);
+
+      setCvUrl(url);
+      setCvModalOpen(true);
+    } catch (error) {
+      message.error("Failed to load CV file");
+      console.error(error);
+    } finally {
+      setIsViewingCv(false);
+    }
+  };
+  const handleCloseCvModal = () => {
+    setCvModalOpen(false);
+    if (cvUrl) {
+      URL.revokeObjectURL(cvUrl);
+      setCvUrl(null);
+    }
+  };
   const {
     data: applications,
     isLoading,
@@ -36,6 +65,15 @@ const ProfilePage = () => {
     queryFn: () => applicationApi.getApplicantApplications(user?.id),
     enabled: !!user?.id, // Only run the query if user.id exists
     staleTime: 1000 * 60 * 5, // Cache data for 5 minutes
+  });
+  const {
+    data: cvData,
+    isLoading: cvLoading,
+    isError: cvError,
+  } = useQuery({
+    queryKey: ["cv", user?.id],
+    queryFn: () => cvApi.getUserCV(user?.id),
+    enabled: !!user?.id,
   });
   const updateMutation = useMutation({
     mutationFn: (data: any) => applicantApi.updateApplicant(user?.id, data),
@@ -108,19 +146,25 @@ const ProfilePage = () => {
             </Title>
             <Text className="text-slate-200">{user?.emailAddress}</Text>
           </div>
-
-          {/* Edit Button */}
-          <Button
-            type="primary"
-            onClick={() => {
-              form.setFieldsValue(user);
-              setEditOpen(true);
-            }}
-            icon={<EditOutlined />}
-            className="flex items-center gap-1"
-          >
-            Edit Profile
-          </Button>
+          <Space>
+            {/* Edit Button */}
+            <Button
+              type="primary"
+              onClick={() => {
+                form.setFieldsValue(user);
+                setEditOpen(true);
+              }}
+              icon={<EditOutlined />}
+              className="flex items-center gap-1"
+            >
+              Edit Profile
+            </Button>
+            {cvData && (
+              <Button icon={<EyeOutlined />} onClick={handleViewCv}>
+                View CV
+              </Button>
+            )}
+          </Space>
         </div>
       </Card>
       {/* Applications Table */}
@@ -176,6 +220,41 @@ const ProfilePage = () => {
             <Input />
           </Form.Item>
         </Form>
+      </Modal>
+      <Modal
+        title="My CV"
+        open={cvModalOpen}
+        footer={[
+          <Button key="close" onClick={handleCloseCvModal}>
+            Close
+          </Button>,
+          <Button
+            key="download"
+            type="primary"
+            href={cvUrl || ""}
+            download={`CV_${user?.lastName}.pdf`}
+          >
+            Download Copy
+          </Button>,
+        ]}
+        onCancel={handleCloseCvModal}
+        width={1000}
+        centered
+        bodyStyle={{ height: "75vh", padding: 0 }}
+      >
+        {cvUrl ? (
+          <iframe
+            src={`${cvUrl}#view=FitH`} // #view=FitH makes the PDF fit to width
+            width="100%"
+            height="100%"
+            style={{ border: "none" }}
+            title="CV Viewer"
+          />
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <Text type="secondary">Loading document...</Text>
+          </div>
+        )}
       </Modal>
     </div>
   );

@@ -32,6 +32,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         this.jobPostService = jobPostService;
 
         this.applicantService = applicantService;
+
     }
 
     @Override
@@ -202,6 +203,14 @@ public class ApplicationServiceImpl implements ApplicationService {
 
             return dto;
         }).toList();
+    }
+
+    @Override
+    public List<Long> getAppliedJobIds(Long applicantId) {
+        Applicant applicant = applicantService.getById(applicantId);
+
+        return applicationRepository.findByApplicantId(applicantId).stream().map(application -> application.getJobPost().getId()).collect(Collectors.toList());
+//        return applicant.getApplications().stream().map(application -> application.getJobPost().getId()).collect(Collectors.toList());
     }
 
 }

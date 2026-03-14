@@ -16,6 +16,7 @@ import JobPost from "../components/JobPost";
 import JobPostDetails from "../components/JobPostDetails";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthContext";
+import { applicationApi } from "../api/applicationApi";
 const CreateJobPost = lazy(() => import("../components/CreateJobPost"));
 const { Search } = Input;
 const { Text } = Typography;
@@ -24,6 +25,7 @@ const JobListingsPage = () => {
   const { user } = useAuth();
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
+  const [appliedJobIds, setAppliedJobIds] = useState<number[]>([]);
   const [selectedJobPost, setSelectedJobPost] = useState<JobPostType | null>(
     null,
   );
@@ -68,7 +70,15 @@ const JobListingsPage = () => {
       setSelectedJobPost(jobPosts[0]);
     }
   }, [data]);
-
+  useEffect(() => {
+    if (user?.id) {
+      applicationApi
+        .getAppliedJobIds(user.id)
+        .then((ids) => setAppliedJobIds(ids));
+    } else {
+      setAppliedJobIds([]);
+    }
+  }, [user]);
   const handleDeleteJob = async (id: number) => {
     try {
       await jobApi.delete(id);
@@ -187,6 +197,7 @@ const JobListingsPage = () => {
                     job={job}
                     selectedJobPost={selectedJobPost}
                     onSelect={setSelectedJobPost}
+                    appliedJobs={appliedJobIds}
                   />
                 ))
               )}

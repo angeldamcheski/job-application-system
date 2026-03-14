@@ -23,5 +23,5 @@ public interface ApplicationService {
 
     List<ApplicationViewDTO> listApplicationView();
     List<ApplicationViewDTO> filterApplicationViewDTO(ApplicationFilterDTO filter);
-
+    List<Long> getAppliedJobIds(Long applicantId);
 }

@@ -15,6 +15,7 @@ import EditOutlined from "@ant-design/icons/EditOutlined";
 import { applicationApi } from "../api/applicationApi";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthContext";
+import ApplyJobModal from "./ApplyModal";
 const EditJobPost = lazy(() => import("./EditJobPost"));
 type JobPostDetailsProp = {
   selectedJobPost: JobPostType | null;
@@ -59,6 +60,7 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
   const [editing, setEditing] = useState(false);
   const [showApplications, setShowApplications] = useState(false);
   const [loadingApplications, setLoadingApplications] = useState(false);
+  const [showAppModal, setShowAppModal] = useState(false);
   const tags: string[] = Array.isArray(selectedJobPost.jobTags)
     ? selectedJobPost.jobTags.flatMap((t) =>
         t.split(",").map((tag) => tag.trim()),
@@ -73,6 +75,12 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
     queryFn: () => applicationApi.getAll(selectedJobPost.id),
     enabled: false,
   });
+  const { data: appliedJobIds = [] } = useQuery({
+    queryKey: ["appliedJobs", user?.id],
+    queryFn: () => applicationApi.getAppliedJobIds(user!.id),
+    enabled: !!user && user.role === "APPLICANT", // Only fetch for logged-in applicants
+  });
+  const hasApplied = appliedJobIds.includes(selectedJobPost.id);
   console.log("Applications render", applications);
   const handleDelete = () => {
     if (!selectedJobPost) return;
@@ -164,9 +172,38 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
             <Button
               type="primary"
               size="large"
+              style={{
+                opacity: hasApplied ? 0.5 : 1,
+                cursor: hasApplied ? "not-allowed" : "pointer",
+              }}
               className="px-8"
-              onClick={async () => {
-                if (!selectedJobPost) return;
+              // onClick={async () => {
+              //   if (!selectedJobPost) return;
+              //   if (!user) {
+              //     notification.warning({
+              //       message: "Not logged in",
+              //       description: "Please log in to apply for this job",
+              //     });
+              //     return;
+              //   }
+              //   try {
+              //     await applicationApi.apply({
+              //       jobPostId: selectedJobPost.id,
+              //       applicantId: user?.id,
+              //     });
+              //     notification.success({
+              //       message: "Application submitted",
+              //       description: `You have successfully applied for ${selectedJobPost.title}`,
+              //     });
+              //   } catch (err: any) {
+              //     console.log("Failed to apply for job", err);
+              //     notification.error({
+              //       message: "Application failed",
+              //       description: err.message,
+              //     });
+              //   }
+              // }}
+              onClick={() => {
                 if (!user) {
                   notification.warning({
                     message: "Not logged in",
@@ -174,25 +211,11 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
                   });
                   return;
                 }
-                try {
-                  await applicationApi.apply({
-                    jobPostId: selectedJobPost.id,
-                    applicantId: user?.id,
-                  });
-                  notification.success({
-                    message: "Application submitted",
-                    description: `You have successfully applied for ${selectedJobPost.title}`,
-                  });
-                } catch (err: any) {
-                  console.log("Failed to apply for job", err);
-                  notification.error({
-                    message: "Application failed",
-                    description: err.message,
-                  });
-                }
+
+                setShowAppModal(true);
               }}
             >
-              Apply Now
+              {hasApplied ? "Already Applied" : "Apply Now"}
             </Button>
           )}
 
@@ -250,6 +273,16 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
           ))}
         </div>
       </div>
+      {user?.role === "APPLICANT" && (
+        <ApplyJobModal
+          open={showAppModal}
+          onClose={() => setShowAppModal(false)}
+          jobPostId={selectedJobPost.id}
+          applicantId={user.id}
+          userName={`${user.firstName} ${user.lastName}`}
+          userEmail={user.emailAddress}
+        />
+      )}
     </div>
   );
 };

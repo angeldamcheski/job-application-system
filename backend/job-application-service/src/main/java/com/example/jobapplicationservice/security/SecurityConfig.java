@@ -31,11 +31,14 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> {
                 })
+                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/jobposts").permitAll()
+                        .requestMatchers("/api/cv/**").hasAnyRole("APPLICANT", "ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/cv/download/**").hasAnyRole("APPLICANT", "ADMIN")
                         .requestMatchers("/api/applicants/").hasAnyRole("APPLICANT", "ADMIN")
-                        .requestMatchers(HttpMethod.GET,"/api/applications/filter/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/applications/filter/**").hasRole("ADMIN")
                         .requestMatchers("/api/applications/applicant/**").hasRole("APPLICANT")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/jobposts/create").hasRole("ADMIN")

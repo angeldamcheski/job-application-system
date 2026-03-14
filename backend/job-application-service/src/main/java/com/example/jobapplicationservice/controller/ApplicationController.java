@@ -59,5 +59,9 @@ public class ApplicationController {
         return ResponseEntity.ok(applicationService.listByApplicant(applicantId));
     }
 
+    @GetMapping("/applicant/{applicantId}/job-ids")
+    public ResponseEntity<List<Long>> getAppliedJobIds(@PathVariable Long applicantId){
+        return ResponseEntity.ok(applicationService.getAppliedJobIds(applicantId));
+    }
 
 }

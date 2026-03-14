@@ -16,6 +16,8 @@ import {
   MailOutlined,
   PhoneOutlined,
   EyeOutlined,
+  RightOutlined,
+  DownOutlined,
 } from "@ant-design/icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { adminApi } from "../api/adminApi";
@@ -37,6 +39,7 @@ const AdminDashboardPage: React.FC = () => {
   const [emailFilter, setEmailFilter] = useState<string>("");
   const [innerEmailFilter, setInnerEmailFilter] = useState<string>("");
   const [selectedApplication, setSelectedApplication] = useState(null);
+  const [metricsOpened, setMetricsOpened] = useState<boolean>(false);
   const queryClient = useQueryClient();
   // 1. Fetch Users Page
   const { data: pageData, isLoading: isUsersLoading } = useQuery({
@@ -150,14 +153,37 @@ const AdminDashboardPage: React.FC = () => {
               className="rounded-xl shadow-sm p-4 space-y-4"
               style={{ marginBottom: 32 }}
             >
-              <Title level={4}>
+              {/* <Title level={4}>
                 Metrics - {selectedUser?.firstName} {selectedUser?.lastName}
               </Title>
               <div className="grid grid-cols-2  gap-4">
                 {getMetrics(userApplications).map((metric) => (
                   <MetricCard key={metric.label} {...metric} />
                 ))}
+              </div> */}
+              <div className="flex items-baseline justify-between mb-4">
+                <Title level={4} className="mb-0">
+                  Metrics – {selectedUser?.firstName} {selectedUser?.lastName}
+                </Title>
+                <Button
+                  type="default"
+                  icon={metricsOpened ? <DownOutlined /> : <RightOutlined />}
+                  onClick={() => setMetricsOpened((prev) => !prev)}
+                  size="middle"
+                ></Button>
               </div>
+
+              {metricsOpened && (
+                <div className="grid grid-cols-2 gap-4">
+                  {getMetrics(userApplications).map((metric) => (
+                    <MetricCard key={metric.label} {...metric} />
+                  ))}
+                </div>
+              )}
+
+              {!metricsOpened && getMetrics(userApplications).length === 0 && (
+                <Text type="secondary">No metrics available yet.</Text>
+              )}
             </Card>
             <div className="inset-shadow-sm/20 bg-neutral-200/20 p-3 rounded-xl ">
               <Descriptions
