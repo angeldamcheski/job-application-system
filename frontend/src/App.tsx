@@ -8,6 +8,8 @@ import { useAuth } from "./context/AuthContext";
 import ProfilePage from "./pages/ProfilePage";
 import AppliedJobDetailsPage from "./pages/AppliedJobDetailsPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
+import SavedJobDetailsPage from "./pages/SavedJobDetailsPage";
+import ManageApplicationsPage from "./pages/ManageApplicationsPage";
 const JobListingsPage = lazy(() => import("./pages/JobListingsPage"));
 const AuthPage = lazy(() => import("./pages/AuthPage"));
 
@@ -45,6 +47,14 @@ function App() {
                       <Navigate to="/" replace />
                     )
                   }
+                />
+                <Route
+                  path="/admin/manage-applications"
+                  element={<ManageApplicationsPage />}
+                />
+                <Route
+                  path="/profile/saved/:id"
+                  element={<SavedJobDetailsPage />}
                 />
               </Routes>
             </Content>

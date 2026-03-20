@@ -36,6 +36,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/jobposts").permitAll()
                         .requestMatchers("/api/cv/**").hasAnyRole("APPLICANT", "ADMIN")
+                        .requestMatchers("/api/bookmarks/**").permitAll()
+//                        .requestMatchers(HttpMethod.DELETE,"/api/bookmarks/delete/**").hasAnyRole("APPLICANT", "ADMIN")
                         .requestMatchers(HttpMethod.GET,"/api/cv/download/**").hasAnyRole("APPLICANT", "ADMIN")
                         .requestMatchers("/api/applicants/").hasAnyRole("APPLICANT", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/applications/filter/**").hasRole("ADMIN")

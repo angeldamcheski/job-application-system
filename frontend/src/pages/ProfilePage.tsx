@@ -9,6 +9,8 @@ import {
   Form,
   Modal,
   Input,
+  Tabs,
+  Badge,
 } from "antd";
 import { data, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -18,6 +20,8 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { applicantApi } from "../api/applicantApi";
 import { cvApi } from "../api/cvApi";
+import { bookmarkApi } from "../api/bookmarkApi";
+import type { BookmarkType } from "../types/BookmarkType";
 
 const { Title, Text } = Typography;
 
@@ -55,6 +59,11 @@ const ProfilePage = () => {
       setCvUrl(null);
     }
   };
+  const { data: bookmarks = [], isLoading: bookmarksLoading } = useQuery({
+    queryKey: ["bookmarks", user?.id],
+    queryFn: () => bookmarkApi.listBookmarksDTO(user!.id),
+    enabled: !!user?.id,
+  });
   const {
     data: applications,
     isLoading,
@@ -107,6 +116,9 @@ const ProfilePage = () => {
       dataIndex: "submittedDate",
       key: "date",
       render: (date) => new Date(date).toLocaleDateString(),
+      sorter: (a, b) =>
+        new Date(a.submittedDate).getTime() - new Date(b.submittedDate).getTime(),
+      defaultSortOrder: "descend",
     },
 
     {
@@ -121,6 +133,34 @@ const ProfilePage = () => {
               state: { status: record.applicationStatus },
             })
           }
+        >
+          View Job
+        </Button>
+      ),
+    },
+  ];
+  const bookmarksColumns = [
+    {
+      title: "Job Title",
+      dataIndex: "jobTitle",
+      key: "jobTitle",
+    },
+    {
+      title: "Saved On",
+      dataIndex: "savedOn",
+      key: "savedOn",
+      render: (date: string) => new Date(date).toLocaleDateString(),
+      sorter: (a: BookmarkType, b: BookmarkType) =>
+        new Date(a.savedOn).getTime() - new Date(b.savedOn).getTime(),
+      defaultSortOrder: "descend",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record: BookmarkType) => (
+        <Button
+          type="link"
+          onClick={() => navigate(`/profile/saved/${record.jobPostId}`)}
         >
           View Job
         </Button>
@@ -168,7 +208,7 @@ const ProfilePage = () => {
         </div>
       </Card>
       {/* Applications Table */}
-      <Card
+      {/* <Card
         title={<span className="text-lg font-semibold">My Applications</span>}
         className="shadow-sm border-slate-100"
       >
@@ -179,7 +219,43 @@ const ProfilePage = () => {
           pagination={{ pageSize: 5 }}
           locale={{ emptyText: "You haven't applied to any jobs yet." }}
         />
-      </Card>
+      </Card> */}
+      <Tabs
+        defaultActiveKey="applications"
+        title="My applications"
+        items={[
+          {
+            key: "applications",
+            label: "My Applications",
+            children: (
+              <Table
+                dataSource={applications || []}
+                columns={columns}
+                rowKey={(record) => record.id}
+                pagination={{ pageSize: 5 }}
+                locale={{ emptyText: "You haven't applied to any jobs yet." }}
+              />
+            ),
+          },
+          {
+            key: "bookmarks",
+            label: (
+              <Badge count={bookmarks.length} offset={[7, 0]} size="small">
+                <span>Saved Jobs</span>
+              </Badge>
+            ),
+            children: (
+              <Table
+                dataSource={bookmarks}
+                columns={bookmarksColumns}
+                rowKey={(record) => record.jobPostId}
+                pagination={{ pageSize: 5 }}
+                locale={{ emptyText: "You haven't saved any jobs yet." }}
+              />
+            ),
+          },
+        ]}
+      />
       <Modal
         title="Edit Profile"
         open={editOpen}

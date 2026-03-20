@@ -33,7 +33,12 @@ const statusColors: Record<string, string> = {
   ACCEPTED: "green",
   REJECTED: "red",
 };
-
+const tailwindStatusColors: Record<string, string> = {
+  SUBMITTED: "bg-blue-300",
+  IN_REVIEW: "bg-orange-300",
+  ACCEPTED: "bg-green-300",
+  REJECTED: "bg-red-300",
+};
 const ApplicationKanban: React.FC<Props> = ({
   applications,
   refetch,
@@ -93,7 +98,12 @@ const ApplicationKanban: React.FC<Props> = ({
             onDragOver={(e) => e.preventDefault()}
             onDrop={() => handleDrop(status)}
           >
-            <Title level={5}>{status}</Title>
+            <div className="flex items-center gap-2 mb-2">
+              <div
+                className={`rounded-full ${tailwindStatusColors[status]} w-4 h-4`}
+              ></div>
+              <h4 className="text-md text-slate-600 font-medium">{status}</h4>
+            </div>
 
             {grouped[status]?.map((app: Application) => (
               <Card

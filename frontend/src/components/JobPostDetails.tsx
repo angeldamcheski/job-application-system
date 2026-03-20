@@ -13,9 +13,11 @@ import {
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
 import EditOutlined from "@ant-design/icons/EditOutlined";
 import { applicationApi } from "../api/applicationApi";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthContext";
 import ApplyJobModal from "./ApplyModal";
+import { SaveFilled, SaveOutlined } from "@ant-design/icons";
+import { bookmarkApi } from "../api/bookmarkApi";
 const EditJobPost = lazy(() => import("./EditJobPost"));
 type JobPostDetailsProp = {
   selectedJobPost: JobPostType | null;
@@ -28,6 +30,10 @@ const applicationColumns = [
     title: "Applicant Name",
     dataIndex: ["applicant", "firstName"],
     key: "firstName",
+    sorter: (a: any, b: any) =>
+      a.applicant.firstName.localeCompare(b.applicant.firstName),
+    render: (_: any, record: any) =>
+      `${record.applicant.firstName} ${record.applicant.lastName}`,
   },
   {
     title: "Applicant Email",
@@ -39,6 +45,8 @@ const applicationColumns = [
     dataIndex: "submittedDate",
     key: "submittedDate",
     render: (date: string) => new Date(date).toLocaleDateString(),
+    sorter: (a: any, b: any) =>
+      new Date(a.submittedDate).getTime() - new Date(b.submittedDate).getTime(),
   },
 ];
 const JobPostDetails: React.FC<JobPostDetailsProp> = ({
@@ -54,6 +62,7 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
       </div>
     );
   }
+  const queryClient = useQueryClient();
   const { confirm } = Modal;
   const { user } = useAuth();
   const [form] = Form.useForm();
@@ -75,12 +84,18 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
     queryFn: () => applicationApi.getAll(selectedJobPost.id),
     enabled: false,
   });
+  const { data: bookmarkedJobIds = [] } = useQuery({
+    queryKey: ["bookmarks", user?.id],
+    queryFn: () => bookmarkApi.listBookmarks(user!.id),
+    enabled: !!user && user.role === "APPLICANT",
+  });
   const { data: appliedJobIds = [] } = useQuery({
     queryKey: ["appliedJobs", user?.id],
     queryFn: () => applicationApi.getAppliedJobIds(user!.id),
     enabled: !!user && user.role === "APPLICANT", // Only fetch for logged-in applicants
   });
   const hasApplied = appliedJobIds.includes(selectedJobPost.id);
+  const hasBookmark = bookmarkedJobIds.includes(selectedJobPost.id);
   console.log("Applications render", applications);
   const handleDelete = () => {
     if (!selectedJobPost) return;
@@ -99,6 +114,51 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
         // do nothing
       },
     });
+  };
+
+  const handleSaveJob = () => {
+    if (!user) {
+      notification.warning({
+        message: "Not logged in",
+        description: "Please log in to save this job",
+      });
+      return;
+    }
+    if (hasBookmark) {
+      bookmarkApi
+        .unsaveJob(user.id, selectedJobPost.id)
+        .then(() => {
+          notification.warning({
+            message: "Job Unsaved",
+            description: `You have removed ${selectedJobPost.title} from your saved jobs`,
+          });
+          queryClient.invalidateQueries({ queryKey: ["bookmarks", user.id] }); // Refresh bookmarks after unsaving
+        })
+        .catch((err) => {
+          console.error("Failed to unsave job", err);
+          notification.error({
+            message: "Failed to unsave job",
+            description: err.message,
+          });
+        });
+    } else {
+      bookmarkApi
+        .saveJob(user.id, selectedJobPost.id)
+        .then(() => {
+          notification.success({
+            message: "Job Saved",
+            description: `You have saved ${selectedJobPost.title}`,
+          });
+          queryClient.invalidateQueries({ queryKey: ["bookmarks", user.id] });
+        })
+        .catch((err) => {
+          console.error("Failed to save job", err);
+          notification.error({
+            message: "Failed to save job",
+            description: err.message,
+          });
+        });
+    }
   };
   return (
     <div className="p-8 max-w-3xl">
@@ -245,7 +305,15 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
               rowKey={(record) => record.id}
             />
           </Modal>
-          {user?.role === "APPLICANT" && <Button size="large">Save</Button>}
+          {user?.role === "APPLICANT" && (
+            <Button
+              size="large"
+              icon={hasBookmark ? <SaveFilled /> : <SaveOutlined />}
+              onClick={handleSaveJob}
+            >
+              {hasBookmark ? "Saved" : "Save "}
+            </Button>
+          )}
           {user?.role === "ADMIN" && (
             <Button size="large" danger type="default" onClick={handleDelete}>
               Delete
@@ -286,5 +354,4 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
     </div>
   );
 };
-
 export default JobPostDetails;

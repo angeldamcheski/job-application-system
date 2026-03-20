@@ -25,6 +25,7 @@ import ApplicationKanban from "../components/ApplicationKanban";
 import ApplicationDetailsAdmin from "../components/ApplicationDetailsAdmin";
 import MetricCard from "../components/MetricCard";
 import { getMetrics } from "../utils/getMetrics";
+import { useNavigate } from "react-router";
 const { Title, Text } = Typography;
 const statusColors: Record<string, string> = {
   SUBMITTED: "blue",
@@ -33,6 +34,7 @@ const statusColors: Record<string, string> = {
   REJECTED: "red",
 };
 const AdminDashboardPage: React.FC = () => {
+  const navigate = useNavigate();
   const [pagination, setPagination] = useState({ current: 1, pageSize: 5 });
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
   const [kanbanOpen, setKanbanOpen] = useState(false);
@@ -78,6 +80,10 @@ const AdminDashboardPage: React.FC = () => {
           <Text strong>{`${record.firstName} ${record.lastName}`}</Text>
         </Space>
       ),
+      sorter: (a: any, b: any) =>
+        `${a.firstName} ${a.lastName}`.localeCompare(
+          `${b.firstName} ${b.lastName}`,
+        ),
     },
     {
       title: "Email Address",
@@ -117,7 +123,13 @@ const AdminDashboardPage: React.FC = () => {
             Monitor registered applicants and their activity.
           </Text>
         </div>
-        <Button type="primary" onClick={() => setKanbanOpen(true)}>
+        {/* <Button type="primary" onClick={() => setKanbanOpen(true)}>
+          Manage Applications
+        </Button> */}
+        <Button
+          type="primary"
+          onClick={() => navigate("/admin/manage-applications")}
+        >
           Manage Applications
         </Button>
       </header>
@@ -220,12 +232,17 @@ const AdminDashboardPage: React.FC = () => {
                     title: "Job Title",
                     dataIndex: ["jobPost", "title"],
                     key: "job",
+                    sorter: (a, b) =>
+                      a.jobPost.title.localeCompare(b.jobPost.title),
                   },
                   {
                     title: "Date Applied",
                     dataIndex: "submittedDate",
                     key: "date",
                     render: (d) => new Date(d).toLocaleDateString(),
+                    sorter: (a, b) =>
+                      new Date(a.submittedDate).getTime() -
+                      new Date(b.submittedDate).getTime(),
                   },
                   {
                     title: "Status",
@@ -237,6 +254,8 @@ const AdminDashboardPage: React.FC = () => {
                         {u.applicationStatus}
                       </Tag>
                     ),
+                    sorter: (a, b) =>
+                      a.applicationStatus.localeCompare(b.applicationStatus),
                   },
                 ]}
                 onRow={(record) => ({

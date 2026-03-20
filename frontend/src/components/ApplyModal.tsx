@@ -4,6 +4,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import type { UploadFile } from "antd/es/upload/interface";
 import { cvApi } from "../api/cvApi";
 import { applicationApi } from "../api/applicationApi";
+import { useQueryClient } from "@tanstack/react-query";
 
 const { Text } = Typography;
 
@@ -24,6 +25,7 @@ const ApplyJobModal: React.FC<Props> = ({
   userName,
   userEmail,
 }) => {
+  const queryClient = useQueryClient();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [uploading, setUploading] = useState(false);
   const [existingCv, setExistingCv] = useState<{
@@ -48,7 +50,7 @@ const ApplyJobModal: React.FC<Props> = ({
       notification.success({
         message: "Application submitted",
       });
-
+      queryClient.invalidateQueries({ queryKey: ["appliedJobs", applicantId] });
       setFileList([]);
       onClose();
     } catch (err: any) {
