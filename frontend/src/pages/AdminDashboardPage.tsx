@@ -145,7 +145,7 @@ const AdminDashboardPage: React.FC = () => {
         </Button>
       </header>
 
-      <Card className="shadow-sm border-slate-100 rounded-xl">
+      <Card className="shadow-sm! border-slate-100! rounded-xl!">
         <div className="mb-4 flex justify-between items-center">
           <Text type="secondary">Search applicants by email</Text>
 
@@ -184,7 +184,7 @@ const AdminDashboardPage: React.FC = () => {
         {selectedUser && (
           <div className="space-y-8 shadow-xl rounded-lg p-5">
             <Card
-              className="rounded-xl shadow-sm p-4 space-y-4"
+              className="rounded-xl! shadow-sm! p-4 space-y-4!"
               style={{ marginBottom: 32 }}
             >
               {/* <Title level={4}>
@@ -196,7 +196,7 @@ const AdminDashboardPage: React.FC = () => {
                 ))}
               </div> */}
               <div className="flex items-baseline justify-between mb-4">
-                <Title level={4} className="mb-0">
+                <Title level={4} className="mb-0!">
                   Metrics – {selectedUser?.firstName} {selectedUser?.lastName}
                 </Title>
                 <Button

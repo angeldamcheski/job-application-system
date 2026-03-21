@@ -191,8 +191,8 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
   return (
     <div className="p-8 max-w-3xl">
       <div className="mt-3 flex flex-wrap gap-4 text-sm text-slate-700">
-        {selectedJobPost.applicationStartDate && !showClosedTag && isActive &&(
-          <div className="px-3 py-1 bg-green-100/20 text-green-500/70 rounded-md font-medium shadow-sm">
+        {selectedJobPost.applicationStartDate && !showClosedTag && isActive && (
+          <div className="px-3 py-1 bg-green-100/20 text-green-500/70 rounded-md font-medium border border-green-200/50">
             {formatJobDate(selectedJobPost.applicationStartDate, {
               prefixPast: "Opened",
               prefixFuture: "Opens in",
@@ -200,12 +200,12 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
           </div>
         )}
         {(showClosedTag || !isActive) && (
-          <div className="px-3 py-1 bg-red-100/20 text-red-500/70 rounded-md font-medium shadow-sm">
+          <div className="px-3 py-1 bg-red-100/20 text-red-500/70 rounded-md font-medium border border-red-200/50">
             No longer accepting applications
           </div>
         )}
         {selectedJobPost.applicationEndDate && !showClosedTag && isActive && (
-          <div className="px-3 py-1 bg-red-100/20 text-red-500/70 rounded-md font-medium shadow-sm">
+          <div className="px-3 py-1 bg-red-100/20 text-red-500/70 rounded-md font-medium border border-red-200/50">
             {formatJobDate(selectedJobPost.applicationEndDate, {
               prefixPast: "Closed",
               prefixFuture: "Closes in",
@@ -214,7 +214,7 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
         )}
 
         {selectedJobPost.maxApplications && !showClosedTag && isActive && (
-          <div className="px-3 py-1 bg-blue-100/20 text-blue-500/70 rounded-md font-medium shadow-sm">
+          <div className="px-3 py-1 bg-blue-100/20 text-blue-500/70 rounded-md font-medium border border-blue-200/50 ">
             {selectedJobPost.applications?.length || 0}{" "}
             {selectedJobPost.applications?.length === 1
               ? "applicant"
@@ -394,7 +394,7 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
       </div>
 
       <div className="mt-8">
-        <h3 className="text-lg font-semibold mb-3">Skills</h3>
+        <h3 className="text-lg font-semibold mb-3">Required Skills</h3>
         <div className="flex gap-2 flex-wrap">
           {tags.map((tag) => (
             // <Tag key={tag} color="blue" className="px-3 py-1 text-sm">

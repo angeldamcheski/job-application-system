@@ -117,7 +117,8 @@ const ProfilePage = () => {
       key: "date",
       render: (date) => new Date(date).toLocaleDateString(),
       sorter: (a, b) =>
-        new Date(a.submittedDate).getTime() - new Date(b.submittedDate).getTime(),
+        new Date(a.submittedDate).getTime() -
+        new Date(b.submittedDate).getTime(),
       defaultSortOrder: "descend",
     },
 
@@ -171,7 +172,7 @@ const ProfilePage = () => {
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
       <Card
-        className="inset-shadow-sm/20 border! border-neutral-800 bg-neutral-200/20! hover:bg-neutral-200/40! rounded-xl p-6 mb-6  transition-all duration-300"
+        className="inset-shadow-sm/20! border! border-neutral-800 bg-neutral-200/20! hover:bg-neutral-200/40! rounded-xl! p-6 mb-6  transition-all! duration-300!"
         style={{ marginBottom: 20 }}
       >
         <div className="flex items-center justify-between space-x-4">
@@ -181,10 +182,10 @@ const ProfilePage = () => {
 
           {/* User Info */}
           <div className="flex-1">
-            <Title level={3} className="m-0 text-slate-900">
+            <Title level={3} className="m-0! text-slate-900!">
               {user?.firstName} {user?.lastName}
             </Title>
-            <Text className="text-slate-200">{user?.emailAddress}</Text>
+            <Text className="text-slate-500!">{user?.emailAddress}</Text>
           </div>
           <Space>
             {/* Edit Button */}
@@ -195,7 +196,7 @@ const ProfilePage = () => {
                 setEditOpen(true);
               }}
               icon={<EditOutlined />}
-              className="flex items-center gap-1"
+              className="flex! items-center! gap-1!"
             >
               Edit Profile
             </Button>

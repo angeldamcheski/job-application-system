@@ -118,10 +118,10 @@ const JobPost: React.FC<JobPostProps> = ({
   return (
     <div
       onClick={() => onSelect(job)}
-      className={`group mx-2 my-1.5 px-5 py-5 rounded-2xl cursor-pointer transition-all duration-200
+      className={`group mx-2 my-1.5 px-5 py-5 rounded-2xl cursor-pointer border border-zinc-200/80 transition-all duration-200
         ${
           isSelected
-            ? "bg-white shadow-lg shadow-blue-100 ring-1 ring-blue-200"
+            ? "bg-white shadow-lg shadow-blue-100 ring-1 ring-blue-200 border-none"
             : "hover:bg-white hover:shadow-md active:scale-[0.985] "
         }
         ${isApplied ? "opacity-75" : ""}
@@ -157,7 +157,7 @@ const JobPost: React.FC<JobPostProps> = ({
       </div>
 
       {/* Short Description */}
-      <p className="mt-3 text-[13.5px] text-slate-500 line-clamp-2 leading-relaxed">
+      <p className="mt-1  text-[13.5px] text-slate-500 line-clamp-2 leading-relaxed">
         {job.shortDescription}
       </p>
 
@@ -179,7 +179,7 @@ const JobPost: React.FC<JobPostProps> = ({
           )}
         </div>
       )} */}
-      <div className="mt-2 flex flex-wrap gap-1.5">
+      <div className="mt-3 flex flex-wrap gap-1.5">
         {showClosedTag ? (
           <span className="inline-block px-3 py-1 text-xs font-medium bg-red-50 text-red-500/70 rounded-md tracking-tight ">
             No longer accepting applications

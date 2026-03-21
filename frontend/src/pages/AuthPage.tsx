@@ -143,8 +143,8 @@ const AuthPage = () => {
     <div className="flex items-center justify-center min-h-screen bg-[#F5F5F7] px-4 selection:bg-blue-200">
       {/* Main Glass Card */}
       <Card
-        bordered={false}
-        className="w-full max-w-[420px] shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-[32px] bg-white/70 backdrop-blur-2xl border border-white/60"
+        variant={"borderless"}
+        className="w-full! max-w-105! shadow-[0_20px_50px_rgba(0,0,0,0.05)]! rounded-4xl! bg-white/70! backdrop-blur-2xl! border! border-white/60!"
       >
         <div className="text-center mb-8">
           <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
@@ -175,17 +175,17 @@ const AuthPage = () => {
             },
           ]}
         />
-  
+
         <Form
           layout="vertical"
           onFinish={onFinish}
           requiredMark={false}
-          className="space-y-1"
+          className="space-y-1!"
         >
           {mode === "register" && (
             <Form.Item
               label={
-                <span className="text-[12px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+                <span className="text-[12px] font-bold text-slate-600 uppercase tracking-widest ml-1">
                   Full Name
                 </span>
               }
@@ -194,14 +194,14 @@ const AuthPage = () => {
             >
               <Input
                 placeholder="John Doe"
-                className="h-12 rounded-xl bg-slate-100/50 border-none hover:bg-slate-100 focus:bg-white transition-all"
+                className="h-12! rounded-xl! bg-slate-100/50! border! hover:bg-slate-100! focus:bg-white! transition-all!"
               />
             </Form.Item>
           )}
 
           <Form.Item
             label={
-              <span className="text-[12px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+              <span className="text-[12px] font-bold text-slate-600 uppercase tracking-widest ml-1">
                 Email
               </span>
             }
@@ -210,13 +210,13 @@ const AuthPage = () => {
           >
             <Input
               placeholder="email@example.com"
-              className="h-12 rounded-xl bg-slate-100/50 border-none hover:bg-slate-100 focus:bg-white transition-all"
+              className="h-12! rounded-xl! bg-slate-100/50! border! hover:bg-slate-100! focus:bg-white! transition-all!"
             />
           </Form.Item>
 
           <Form.Item
             label={
-              <span className="text-[12px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+              <span className="text-[12px] font-bold text-slate-600 uppercase tracking-widest ml-1">
                 Password
               </span>
             }
@@ -225,7 +225,7 @@ const AuthPage = () => {
           >
             <Input.Password
               placeholder="••••••••"
-              className="h-12 rounded-xl bg-slate-100/50 border-none hover:bg-slate-100 focus:bg-white transition-all"
+              className="h-12! rounded-xl! bg-slate-100/50! border! hover:bg-slate-100! focus:bg-white! transition-all!"
             />
           </Form.Item>
 
@@ -234,7 +234,7 @@ const AuthPage = () => {
               type="primary"
               htmlType="submit"
               loading={mutation.isPending}
-              className="w-full h-12 rounded-2xl bg-[#007AFF] hover:bg-[#0062CC] border-none text-[16px] font-semibold shadow-md active:scale-[0.98] transition-all"
+              className="w-full! h-12! rounded-2xl! bg-[#007AFF]! hover:bg-[#0062CC]! border! text-[16px]! font-semibold! shadow-md! active:scale-[0.98]! transition-all!"
             >
               {mode === "login" ? "Sign In" : "Get Started"}
             </Button>

@@ -208,7 +208,7 @@ const JobListingsPage = () => {
                   <Button
                     onClick={() => fetchNextPage()}
                     loading={isFetchingNextPage}
-                    className="w-full"
+                    className="w-full!"
                   >
                     Load More
                   </Button>

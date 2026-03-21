@@ -137,16 +137,15 @@ const AppliedJobDetailsPage = () => {
         description={statusBanner[applicationStatus].description}
         showIcon
         closable
-        className="mb-6 rounded-lg shadow-sm"
-        style={{ marginBottom: 10 }}
+        className="mb-6! rounded-lg! shadow-sm!"
       />
-      <Card className="shadow-lg border-slate-100 rounded-xl overflow-hidden">
+      <Card className="shadow-lg! border-slate-100! rounded-xl! overflow-hidden!">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
             <Title level={2} className="m-0 text-slate-800!">
               {job.title}
             </Title>
-            <Text className="text-lg text-slate-500">
+            <Text className="text-lg text-slate-500!">
               {job.shortDescription}
             </Text>
           </div>
@@ -159,7 +158,7 @@ const AppliedJobDetailsPage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 text-center inset-shadow-sm">
-            <CalendarOutlined className="text-blue-500 mb-2 text-xl" />
+            <CalendarOutlined className="text-blue-500! mb-2! text-2xl!" />
             <div className="text-xs uppercase text-slate-400 font-bold">
               Posted On
             </div>
@@ -168,7 +167,7 @@ const AppliedJobDetailsPage = () => {
             </div>
           </div>
           <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 text-center md:col-span-2 inset-shadow-sm">
-            <TagOutlined className="text-blue-500 mb-2 text-xl" />
+            <TagOutlined className="text-blue-500! mb-2! text-2xl!" />
             <div className="text-xs uppercase text-slate-400 font-bold mb-2">
               Required Skills
             </div>
@@ -176,7 +175,7 @@ const AppliedJobDetailsPage = () => {
               {job.jobTags?.map((tag) => (
                 <Tag
                   key={tag}
-                  className="bg-white border-slate-200 text-slate-600 rounded-full"
+                  className="bg-white! border-slate-200! text-slate-800! rounded-xl! p-1! px-2.5! text-xs! font-light!"
                 >
                   {tag}
                 </Tag>
@@ -185,13 +184,13 @@ const AppliedJobDetailsPage = () => {
           </div>
         </div>
 
-        <Divider className="my-8" />
+        <Divider className="my-8!" />
 
         <div className="prose prose-slate max-w-none">
-          <Title level={4} className="text-slate-700">
+          <Title level={4} className="text-slate-700!">
             Detailed Job Description
           </Title>
-          <Paragraph className="text-slate-600 text-base leading-7 whitespace-pre-wrap">
+          <Paragraph className="text-slate-600! text-base! leading-7! whitespace-pre-wrap!">
             {job.fullDescription}
           </Paragraph>
         </div>
@@ -201,7 +200,7 @@ const AppliedJobDetailsPage = () => {
             size="large"
             icon={<ArrowLeftOutlined />}
             onClick={() => navigate("/profile")}
-            className="rounded-lg hover:border-blue-500 hover:text-blue-500"
+            className="rounded-lg! hover:border-blue-500! hover:text-blue-500!"
           >
             Back to My Applications
           </Button>

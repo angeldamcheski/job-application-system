@@ -53,32 +53,32 @@ const MetricCard: React.FC<MetricCardProps> = ({
     blue: {
       text: "text-blue-600",
       bg: "bg-blue-500/30",
-      glow: "group-hover:bg-blue-500/20",
+      glow: "group-hover:bg-blue-500/80",
     },
     emerald: {
       text: "text-emerald-600",
       bg: "bg-emerald-500/30",
-      glow: "group-hover:bg-emerald-500/20",
+      glow: "group-hover:bg-emerald-500/80",
     },
     amber: {
       text: "text-amber-600",
       bg: "bg-amber-500/30",
-      glow: "group-hover:bg-amber-500/20",
+      glow: "group-hover:bg-amber-500/80",
     },
     violet: {
       text: "text-violet-600",
       bg: "bg-violet-500/30",
-      glow: "group-hover:bg-violet-500/20",
+      glow: "group-hover:bg-violet-500/80",
     },
     rose: {
       text: "text-rose-600",
       bg: "bg-rose-500/30",
-      glow: "group-hover:bg-rose-500/20",
+      glow: "group-hover:bg-rose-500/80",
     },
     slate: {
       text: "text-slate-600",
       bg: "bg-slate-500/30",
-      glow: "group-hover:bg-slate-500/20",
+      glow: "group-hover:bg-slate-500/80",
     },
   };
 
@@ -89,7 +89,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
       className={`
         group relative flex flex-col justify-between overflow-hidden
         rounded-2xl p-5 transition-all duration-300 ease-out
-        bg-white/80 backdrop-blur-xl border border-slate-200/80
+        bg-white/80 backdrop-blur-xl border border-slate-400/80
         shadow-[0_8px_30px_rgb(0,0,0,0.04)]
         hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)]
         hover:-translate-y-0.5 active:scale-[0.98]
