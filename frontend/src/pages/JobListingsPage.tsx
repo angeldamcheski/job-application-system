@@ -155,7 +155,9 @@ const JobListingsPage = () => {
             {/* LEFT COLUMN: Job List */}
             <div className="w-1/3 h-full overflow-y-auto border-r border-slate-200 bg-white">
               <div className="flex p-4 space-x-12 justify-center bg-white sticky top-0 z-10 border-b border-slate-100">
-                <h2 className="text-lg font-bold">Job Postings</h2>
+                <h2 className="text-lg tracking-tight font-normal text-zinc-800">
+                  Job Listings
+                </h2>
 
                 {user?.role === "ADMIN" && (
                   <Button type="primary" size="medium" onClick={showModal}>

@@ -205,10 +205,10 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
             }}
           />
         </Modal>
-        <h1 className="text-3xl font-bold text-slate-900">
+        <h1 className="text-3xl font-normal tracking-tight text-slate-900">
           {selectedJobPost.title}
         </h1>
-        <h5 className="text-m font semibold text-slate-600">
+        <h5 className="text-base font semibold text-slate-600">
           {selectedJobPost.shortDescription}
         </h5>
         <div className="flex items-center gap-4 mt-2 text-slate-500">
@@ -275,7 +275,7 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
                 setShowAppModal(true);
               }}
             >
-              {hasApplied ? "Already Applied" : "Apply Now"}
+              {hasApplied ? "Applied" : "Apply Now"}
             </Button>
           )}
 
@@ -335,9 +335,17 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
         <h3 className="text-lg font-semibold mb-3">Skills</h3>
         <div className="flex gap-2 flex-wrap">
           {tags.map((tag) => (
-            <Tag key={tag} color="blue" className="px-3 py-1 text-sm">
+            // <Tag key={tag} color="blue" className="px-3 py-1 text-sm">
+            //   {tag}
+            // </Tag>
+            <div
+              key={tag}
+              className="inline-flex items-center px-3 py-1 bg-white border border-slate-200 
+                         rounded-2xl text-sm text-slate-700 font-light tracking-tight
+                         shadow-sm hover:border-slate-300 hover:shadow transition-all"
+            >
               {tag}
-            </Tag>
+            </div>
           ))}
         </div>
       </div>
