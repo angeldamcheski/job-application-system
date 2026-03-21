@@ -36,11 +36,12 @@ public class AdminController {
     @GetMapping("/users")
     public ResponseEntity<Page<Applicant>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String email) {
 
         // We assume you'll add a paginated method to your ApplicantService
         Page<Applicant> applicants = applicantService.getPaginatedApplicants(
-                PageRequest.of(page, size, Sort.by("id").descending())
+                PageRequest.of(page, size, Sort.by("id").descending()), email
         );
         return ResponseEntity.ok(applicants);
     }

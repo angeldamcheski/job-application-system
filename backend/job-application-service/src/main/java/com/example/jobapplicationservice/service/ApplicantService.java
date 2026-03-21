@@ -14,7 +14,7 @@ public interface ApplicantService {
     Applicant createApplicant(Applicant applicant);
     Applicant updateApplicant(Long id, ApplicantEditDTO updatedApplicant);
     void deleteApplicant(Long id);
-    Page<Applicant> getPaginatedApplicants(Pageable pageable);
+    Page<Applicant> getPaginatedApplicants(Pageable pageable, String email);
 
 
 }

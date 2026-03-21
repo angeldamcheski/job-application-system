@@ -61,7 +61,11 @@ public class ApplicantServiceImpl implements ApplicantService {
     }
 
     @Override
-    public Page<Applicant> getPaginatedApplicants(Pageable pageable) {
+    public Page<Applicant> getPaginatedApplicants(Pageable pageable, String email) {
+        if (email != null && !email.isBlank()) {
+            return applicantRepository
+                    .findByEmailAddressContainingIgnoreCase(email, pageable);
+        }
         // This will handle the SQL LIMIT and OFFSET automatically
         return applicantRepository.findAll(pageable);
     }

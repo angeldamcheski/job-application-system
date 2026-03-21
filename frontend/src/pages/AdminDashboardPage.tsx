@@ -26,6 +26,7 @@ import ApplicationDetailsAdmin from "../components/ApplicationDetailsAdmin";
 import MetricCard from "../components/MetricCard";
 import { getMetrics } from "../utils/getMetrics";
 import { useNavigate } from "react-router";
+import { Input } from "antd";
 const { Title, Text } = Typography;
 const statusColors: Record<string, string> = {
   SUBMITTED: "blue",
@@ -45,9 +46,19 @@ const AdminDashboardPage: React.FC = () => {
   const queryClient = useQueryClient();
   // 1. Fetch Users Page
   const { data: pageData, isLoading: isUsersLoading } = useQuery({
-    queryKey: ["admin", "users", pagination.current, pagination.pageSize],
+    queryKey: [
+      "admin",
+      "users",
+      pagination.current,
+      pagination.pageSize,
+      innerEmailFilter,
+    ],
     queryFn: () =>
-      adminApi.getApplicants(pagination.current - 1, pagination.pageSize),
+      adminApi.getApplicants(
+        pagination.current - 1,
+        pagination.pageSize,
+        innerEmailFilter,
+      ),
   });
 
   // 2. Fetch User Applications (only when a user is selected)
@@ -135,6 +146,17 @@ const AdminDashboardPage: React.FC = () => {
       </header>
 
       <Card className="shadow-sm border-slate-100 rounded-xl">
+        <div className="mb-4 flex justify-between items-center">
+          <Text type="secondary">Search applicants by email</Text>
+
+          <Input.Search
+            placeholder="Search by email..."
+            allowClear
+            onSearch={(value) => setEmailFilter(value)}
+            style={{ width: 300 }}
+            loading={isUsersLoading}
+          />
+        </div>
         <Table
           columns={columns}
           dataSource={pageData?.content || []}

@@ -1,5 +1,9 @@
 import axios from "axios";
-import type { ApplicationFilterDTO, ApplicationType, ApplicationView } from "../types/ApplicationType"; // Reuse your existing types
+import type {
+  ApplicationFilterDTO,
+  ApplicationType,
+  ApplicationView,
+} from "../types/ApplicationType"; // Reuse your existing types
 
 const API_BASE_URL = "http://localhost:8080/api/admin";
 
@@ -22,9 +26,9 @@ export const adminApi = {
    * @param page 0-indexed page number
    * @param size number of items per page
    */
-  getApplicants: async (page: number, size: number) => {
+  getApplicants: async (page: number, size: number, email?: string) => {
     const { data } = await api.get("/users", {
-      params: { page, size },
+      params: { page, size, email }, // Pass email filter as query param
     });
     return data; // Returns Page<Applicant> object
   },
@@ -46,9 +50,11 @@ export const adminApi = {
     await api.patch(`/${applicationId}/status`, { status });
   },
   filter: async (
-      filterDTO: ApplicationFilterDTO,
-    ): Promise<ApplicationType[]> => {
-      const { data } = await api.get("/applications/filter", { params: filterDTO });
-      return data;
-    },
+    filterDTO: ApplicationFilterDTO,
+  ): Promise<ApplicationType[]> => {
+    const { data } = await api.get("/applications/filter", {
+      params: filterDTO,
+    });
+    return data;
+  },
 };
