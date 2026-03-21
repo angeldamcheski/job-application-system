@@ -53,6 +53,15 @@ public class JobPost {
     @Column(name = "job_updated_date")
     private LocalDate updateDate;
 
+    @Column(name = "application_start_date")
+    private LocalDate applicationStartDate;
+
+    @Column(name = "application_end_date")
+    private LocalDate applicationEndDate;
+
+    @Column(name = "max_applications")
+    private Integer maxApplications;
+
     public JobPost(String title, String shortDescription, String fullDescription, List<String> jobTags, JobStatus jobStatus, LocalDate creationDate, LocalDate updateDate) {
         this.title = title;
         this.shortDescription = shortDescription;

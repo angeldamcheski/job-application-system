@@ -142,6 +142,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Application apply(ApplicationDTO applicationDTO) {
         JobPost job = jobPostService.getJobPost(applicationDTO.getJobPostId());
+        validateApplication(job);
         Applicant applicant = applicantService.getById(applicationDTO.getApplicantId());
 
         boolean hasApplied = applicationRepository.existsByJobPostAndApplicant(job, applicant);
@@ -211,6 +212,23 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         return applicationRepository.findByApplicantId(applicantId).stream().map(application -> application.getJobPost().getId()).collect(Collectors.toList());
 //        return applicant.getApplications().stream().map(application -> application.getJobPost().getId()).collect(Collectors.toList());
+    }
+
+    @Override
+    public void validateApplication(JobPost jobPost) {
+        LocalDate today = LocalDate.now();
+        if(jobPost.getApplicationStartDate() != null && today.isBefore(jobPost.getApplicationStartDate())){
+            throw new RuntimeException("Applications open on " + jobPost.getApplicationStartDate());
+        }
+        if(jobPost.getApplicationEndDate() != null && today.isAfter(jobPost.getApplicationEndDate())){
+            throw new RuntimeException("Application deadline has passed");
+        }
+        if(jobPost.getMaxApplications() != null){
+            int currentCount = applicationRepository.countByJobPost(jobPost);
+            if(currentCount >= jobPost.getMaxApplications()){
+                throw new RuntimeException("Maximum applications reached (" + currentCount + "/" + jobPost.getMaxApplications() + ")");
+            }
+        }
     }
 
 }

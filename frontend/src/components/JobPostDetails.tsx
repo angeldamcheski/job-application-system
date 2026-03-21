@@ -18,6 +18,7 @@ import { useAuth } from "../context/AuthContext";
 import ApplyJobModal from "./ApplyModal";
 import { SaveFilled, SaveOutlined } from "@ant-design/icons";
 import { bookmarkApi } from "../api/bookmarkApi";
+import { formatJobDate, getTimeAgo } from "../utils/dateUtils";
 const EditJobPost = lazy(() => import("./EditJobPost"));
 type JobPostDetailsProp = {
   selectedJobPost: JobPostType | null;
@@ -160,8 +161,68 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
         });
     }
   };
+  const today = new Date();
+
+  const startDate = selectedJobPost.applicationStartDate
+    ? new Date(selectedJobPost.applicationStartDate)
+    : null;
+
+  const endDate = selectedJobPost.applicationEndDate
+    ? new Date(selectedJobPost.applicationEndDate)
+    : null;
+
+  const isBeforeStart = startDate && today < startDate;
+  const isAfterEnd = endDate && today > endDate;
+
+  const isFull =
+    selectedJobPost.maxApplications &&
+    selectedJobPost.applicationCount !== undefined &&
+    selectedJobPost.applicationCount >= selectedJobPost.maxApplications;
+
+  const jobStatus = selectedJobPost.jobStatus;
+  const isActive = jobStatus === "ACTIVE";
+  const isDisabled =
+    hasApplied ||
+    isBeforeStart ||
+    isAfterEnd ||
+    isFull ||
+    jobStatus !== "ACTIVE";
+  const showClosedTag = isBeforeStart || isAfterEnd || isFull;
   return (
     <div className="p-8 max-w-3xl">
+      <div className="mt-3 flex flex-wrap gap-4 text-sm text-slate-700">
+        {selectedJobPost.applicationStartDate && !showClosedTag && isActive &&(
+          <div className="px-3 py-1 bg-green-100/20 text-green-500/70 rounded-md font-medium shadow-sm">
+            {formatJobDate(selectedJobPost.applicationStartDate, {
+              prefixPast: "Opened",
+              prefixFuture: "Opens in",
+            })}
+          </div>
+        )}
+        {(showClosedTag || !isActive) && (
+          <div className="px-3 py-1 bg-red-100/20 text-red-500/70 rounded-md font-medium shadow-sm">
+            No longer accepting applications
+          </div>
+        )}
+        {selectedJobPost.applicationEndDate && !showClosedTag && isActive && (
+          <div className="px-3 py-1 bg-red-100/20 text-red-500/70 rounded-md font-medium shadow-sm">
+            {formatJobDate(selectedJobPost.applicationEndDate, {
+              prefixPast: "Closed",
+              prefixFuture: "Closes in",
+            })}
+          </div>
+        )}
+
+        {selectedJobPost.maxApplications && !showClosedTag && isActive && (
+          <div className="px-3 py-1 bg-blue-100/20 text-blue-500/70 rounded-md font-medium shadow-sm">
+            {selectedJobPost.applications?.length || 0}{" "}
+            {selectedJobPost.applications?.length === 1
+              ? "applicant"
+              : "applicants"}{" "}
+          </div>
+        )}
+      </div>
+
       <div className="mb-6">
         <CloseOutlined
           onClick={onClose}
@@ -213,8 +274,8 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
         </h5>
         <div className="flex items-center gap-4 mt-2 text-slate-500">
           <span>
-            Posted on{" "}
-            {new Date(selectedJobPost.creationDate).toLocaleDateString()}
+            Posted {getTimeAgo(selectedJobPost.creationDate)}
+            {/* {new Date(selectedJobPost.creationDate).toLocaleDateString()} */}
           </span>
 
           <Tag
@@ -232,6 +293,7 @@ const JobPostDetails: React.FC<JobPostDetailsProp> = ({
             <Button
               type="primary"
               size="large"
+              disabled={!!isDisabled}
               style={{
                 opacity: hasApplied ? 0.5 : 1,
                 cursor: hasApplied ? "not-allowed" : "pointer",

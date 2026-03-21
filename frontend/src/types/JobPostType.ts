@@ -7,6 +7,11 @@ export interface JobPostType {
   jobStatus: "ACTIVE" | "INACTIVE";
   creationDate: string;
   updateDate: string;
+
+  applicationStartDate?: string;
+  applicationEndDate?: string;
+  maxApplications?: number;
+  applicationCount?: number;
 }
 
 export interface JobApiResponse {

@@ -98,6 +98,23 @@ const JobPost: React.FC<JobPostProps> = ({
       )
     : [];
 
+  const today = new Date();
+  const startDate = job.applicationStartDate
+    ? new Date(job.applicationStartDate)
+    : null;
+  const endDate = job.applicationEndDate
+    ? new Date(job.applicationEndDate)
+    : null;
+  const isBeforeStart = startDate && today < startDate;
+  const isAfterEnd = endDate && today > endDate;
+  const isFull =
+    job.maxApplications && job.applicationCount !== undefined
+      ? job.applicationCount >= job.maxApplications
+      : false;
+
+  const isActive = job.jobStatus === "ACTIVE";
+  const isDisabled = isApplied || isBeforeStart || isAfterEnd || isFull;
+  const showClosedTag = isBeforeStart || isAfterEnd || isFull || !isActive;
   return (
     <div
       onClick={() => onSelect(job)}
@@ -105,7 +122,7 @@ const JobPost: React.FC<JobPostProps> = ({
         ${
           isSelected
             ? "bg-white shadow-lg shadow-blue-100 ring-1 ring-blue-200"
-            : "hover:bg-white hover:shadow-md active:scale-[0.985]"
+            : "hover:bg-white hover:shadow-md active:scale-[0.985] "
         }
         ${isApplied ? "opacity-75" : ""}
       `}
@@ -113,26 +130,28 @@ const JobPost: React.FC<JobPostProps> = ({
       <div className="flex items-start justify-between gap-3">
         {/* Title */}
         <h3
-          className={`font-medium text-[15.5px] leading-tight tracking-[-0.01em] line-clamp-2 flex-1 transition-colors
+          className={`font-medium text-[15.5px] leading-tight tracking-[-0.01em] line-clamp-2 flex-1 min-w-0 overflow-hidden transition-colors
             ${isSelected ? "text-blue-700" : "text-slate-900 group-hover:text-slate-800"}`}
         >
           {job.title}
         </h3>
 
         {/* Status / Applied Badge */}
-        <div className="flex-shrink-0">
-          {isApplied ? (
+        <div className="shrink-0">
+          {!showClosedTag && isApplied ? (
             <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-3 py-0.5 rounded-full text-xs font-medium">
               <CheckOutlined className="w-3.5 h-3.5" />
               Applied
             </div>
           ) : (
-            <Tag
-              color={job.jobStatus === "ACTIVE" ? "green" : "red"}
-              className="text-xs font-medium border-0 px-3 py-0.5 rounded-full"
-            >
-              {job.jobStatus}
-            </Tag>
+            !showClosedTag && (
+              <Tag
+                color={job.jobStatus === "ACTIVE" ? "green" : "red"}
+                className="text-xs font-medium border-0 px-3 py-0.5 rounded-full"
+              >
+                {job.jobStatus}
+              </Tag>
+            )
           )}
         </div>
       </div>
@@ -143,7 +162,7 @@ const JobPost: React.FC<JobPostProps> = ({
       </p>
 
       {/* Tags */}
-      {tags.length > 0 && (
+      {/* {tags.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-1.5">
           {tags.slice(0, 3).map((tag) => (
             <span
@@ -159,7 +178,30 @@ const JobPost: React.FC<JobPostProps> = ({
             </span>
           )}
         </div>
-      )}
+      )} */}
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        {showClosedTag ? (
+          <span className="inline-block px-3 py-1 text-xs font-medium bg-red-50 text-red-500/70 rounded-md tracking-tight ">
+            No longer accepting applications
+          </span>
+        ) : (
+          <>
+            {tags.slice(0, 3).map((tag) => (
+              <span
+                key={tag}
+                className="inline-block px-3 py-0.5 text-[10.5px] font-light bg-slate-100 text-slate-600 rounded-lg tracking-tight"
+              >
+                {tag}
+              </span>
+            ))}
+            {tags.length > 3 && (
+              <span className="inline-block px-3 py-0.5 text-[10.5px] font-light text-slate-400">
+                +{tags.length - 3}
+              </span>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 };

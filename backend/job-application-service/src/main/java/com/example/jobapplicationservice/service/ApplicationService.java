@@ -3,6 +3,7 @@ package com.example.jobapplicationservice.service;
 import com.example.jobapplicationservice.controller.dto.Application.ApplicationFilterDTO;
 import com.example.jobapplicationservice.controller.dto.Application.ApplicationViewDTO;
 import com.example.jobapplicationservice.model.Application;
+import com.example.jobapplicationservice.model.JobPost;
 import com.example.jobapplicationservice.model.dto.ApplicationDTO;
 import com.example.jobapplicationservice.model.enums.ApplicationStatus;
 
@@ -24,4 +25,6 @@ public interface ApplicationService {
     List<ApplicationViewDTO> listApplicationView();
     List<ApplicationViewDTO> filterApplicationViewDTO(ApplicationFilterDTO filter);
     List<Long> getAppliedJobIds(Long applicantId);
+
+    void validateApplication(JobPost jobPost);
 }
