@@ -90,7 +90,9 @@ public class JobPostServiceImpl implements JobPostService {
                 processedTags,
                 jobPostCreateDto.getJobStatus(),
                 LocalDate.now(),
-                LocalDate.now()
+                LocalDate.now(),
+                jobPostCreateDto.getApplicationStartDate(),
+                jobPostCreateDto.getApplicationEndDate()
         );
         jobPostRepository.save(jobPost);
         return jobPost;

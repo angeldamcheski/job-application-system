@@ -100,6 +100,13 @@ const JobListingsPage = () => {
   const handleCreate = async () => {
     try {
       const values = await form.validateFields();
+      if (
+        values.applicationStartDate &&
+        values.applicationEndDate &&
+        values.applicationEndDate.isBefore(values.applicationStartDate)
+      ) {
+        throw new Error("End date must be after start date");
+      }
       const newJob = {
         ...values,
         jobTags: values.jobTags
@@ -108,6 +115,12 @@ const JobListingsPage = () => {
         jobStatus: "ACTIVE",
         creationDate: new Date().toISOString().split("T")[0],
         updateDate: new Date().toISOString().split("T")[0],
+        applicationStartDate: values.applicationStartDate
+          ? values.applicationStartDate.format("YYYY-MM-DD")
+          : null,
+        applicationEndDate: values.applicationEndDate
+          ? values.applicationEndDate.format("YYYY-MM-DD")
+          : null,
       };
 
       console.log(newJob);

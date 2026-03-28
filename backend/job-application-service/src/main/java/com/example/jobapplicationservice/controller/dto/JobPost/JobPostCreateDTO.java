@@ -20,4 +20,10 @@ public class JobPostCreateDTO {
     @DateTimeFormat(pattern = "YYYY-MM-dd")
     private LocalDate updateDate;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate applicationStartDate;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate applicationEndDate;
+
 }

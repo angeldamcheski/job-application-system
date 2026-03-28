@@ -1,13 +1,16 @@
 import React from "react";
 import type { FormProps } from "antd";
-import { Form, Input } from "antd";
+import { Form, Input, DatePicker } from "antd";
 import type { FormInstance } from "antd";
+import dayjs from "dayjs";
 type FieldType = {
   title: string;
   shortDescription: string;
   fullDescription: string;
   jobTags: string;
   jobStatus: string;
+  applicationStartDate: dayjs.Dayjs;
+  applicationEndDate: dayjs.Dayjs;
 };
 type Props = {
   form: FormInstance;
@@ -57,6 +60,21 @@ const CreateJobPost: React.FC<Props> = ({ form }) => {
         ]}
       >
         <Input.TextArea />
+      </Form.Item>
+      <Form.Item<FieldType>
+        label="Application Start"
+        name="applicationStartDate"
+        rules={[{ required: true, message: "Please select start date" }]}
+      >
+        <DatePicker style={{ width: "100%" }} />
+      </Form.Item>
+
+      <Form.Item<FieldType>
+        label="Application End"
+        name="applicationEndDate"
+        rules={[{ required: true, message: "Please select end date" }]}
+      >
+        <DatePicker style={{ width: "100%" }} />
       </Form.Item>
       <Form.Item label="Tags (comma separated)" name="jobTags">
         <Input placeholder="React, TypeScript, Spring" />

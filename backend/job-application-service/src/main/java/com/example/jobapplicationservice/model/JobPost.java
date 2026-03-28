@@ -62,7 +62,9 @@ public class JobPost {
     @Column(name = "max_applications")
     private Integer maxApplications;
 
-    public JobPost(String title, String shortDescription, String fullDescription, List<String> jobTags, JobStatus jobStatus, LocalDate creationDate, LocalDate updateDate) {
+    public JobPost(String title, String shortDescription, String fullDescription, List<String> jobTags,
+                   JobStatus jobStatus, LocalDate creationDate,
+                   LocalDate updateDate, LocalDate applicationStartDate, LocalDate applicationEndDate) {
         this.title = title;
         this.shortDescription = shortDescription;
         this.fullDescription = fullDescription;
@@ -70,6 +72,8 @@ public class JobPost {
         this.jobStatus = jobStatus;
         this.creationDate = creationDate;
         this.updateDate = updateDate;
+        this.applicationStartDate = applicationStartDate;
+        this.applicationEndDate = applicationEndDate;
 
 
     }
