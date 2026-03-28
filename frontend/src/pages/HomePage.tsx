@@ -34,9 +34,12 @@ const HomePage = () => {
 
       <div className="max-w-md text-center space-y-10 relative">
         {/* Optional subtle illustration / icon */}
-        <div className="mx-auto w-20 h-20 bg-white rounded-full shadow-xl shadow-blue-100 flex items-center justify-center border border-white">
-          <Avatar icon={<UserOutlined />} size={70} />
-        </div>
+        
+        {user?.role === "APPLICANT" && (
+          <div className="mx-auto w-20 h-20 bg-white rounded-full shadow-xl shadow-blue-100 flex items-center justify-center border border-white">
+            <Avatar icon={<UserOutlined />} src={user?.profileImageUrl ? `http://localhost:8080${user.profileImageUrl}` : undefined} size={70} />
+          </div>
+        )}
 
         <div className="space-y-4">
           <h1 className="text-5xl font-light tracking-tighter text-zinc-900">

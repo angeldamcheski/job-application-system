@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       lastName: response.lastName,
       emailAddress: response.emailAddress,
       role: response.role,
+      profileImageUrl: response.profileImageUrl,
     };
     setUser(userData);
     setToken(response.token);
@@ -44,6 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       lastName: response.lastName,
       emailAddress: response.emailAddress,
       role: response.role,
+      profileImageUrl: response.profileImageUrl,
     };
     setUser(userData);
     setToken(response.token);

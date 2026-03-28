@@ -58,6 +58,6 @@ public class AuthServiceImpl implements AuthService {
         return new AuthResponseDTO(user.getId(), user.getFirstName(),
                 user.getLastName(),
                 user.getEmailAddress(),
-                user instanceof Admin ? UserRole.ADMIN.name() : UserRole.APPLICANT.name(), token);
+                user instanceof Admin ? UserRole.ADMIN.name() : UserRole.APPLICANT.name(), token, user.getProfileImageUrl());
     }
 }

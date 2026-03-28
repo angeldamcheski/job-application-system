@@ -1,16 +1,19 @@
 import {
-  Card,
-  Table,
-  Tag,
-  Button,
-  Typography,
-  Space,
-  message,
-  Form,
-  Modal,
-  Input,
-  Tabs,
+  Avatar,
   Badge,
+  Button,
+  Card,
+  Form,
+  Input,
+  Modal,
+  Space,
+  Spin,
+  Table,
+  Tabs,
+  Tag,
+  Typography,
+  Upload,
+  message,
 } from "antd";
 import { data, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -33,6 +36,7 @@ const ProfilePage = () => {
   const [cvUrl, setCvUrl] = useState<string | null>(null);
   const [isViewingCv, setIsViewingCv] = useState(false);
   const [cvModalOpen, setCvModalOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [form] = Form.useForm();
   const handleViewCv = async () => {
     if (!cvData?.id) return;
@@ -101,6 +105,19 @@ const ProfilePage = () => {
       message.error("Failed to update profile");
     },
   });
+  const handleProfileUpload = async (file: File) => {
+    try {
+      setUploading(true);
+      const imageUrl = await applicantApi.uploadProfileImage(user!.id, file);
+      updateUser({ ...user!, profileImageUrl: imageUrl });
+      message.success("Profile picture updated!");
+    } catch (err) {
+      console.error(err);
+      message.error("Failed to upload profile picture");
+    } finally {
+      setUploading(false);
+    }
+  };
   // Columns for the applications table
   const columns = [
     {
@@ -169,6 +186,7 @@ const ProfilePage = () => {
     },
   ];
   console.log("User data pfp", user?.lastName);
+  console.log("User profile image", user?.profileImageUrl);
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
       <Card
@@ -176,10 +194,28 @@ const ProfilePage = () => {
         style={{ marginBottom: 20 }}
       >
         <div className="flex items-center justify-between space-x-4">
-          <div className="shrink-0 bg-blue-100/20 border border-slate-400 p-5 rounded-full flex items-center justify-center">
+          {/* <div className="shrink-0 bg-blue-100/20 border border-slate-400 p-5 rounded-full flex items-center justify-center">
             <UserOutlined className="text-3xl text-blue-500" />
+          </div> */}
+          <div className="shrink-0">
+            <Upload
+              showUploadList={false}
+              beforeUpload={(file) => {
+                handleProfileUpload(file);
+                return false; // prevent auto upload
+              }}
+              accept="image/*"
+            >
+              <Avatar
+                size={80}
+                src={user?.profileImageUrl ? `http://localhost:8080${user.profileImageUrl}` : undefined}
+                icon={!user?.profileImageUrl && <UserOutlined />}
+                className="cursor-pointer"
+              >
+                {uploading && <Spin />}
+              </Avatar>
+            </Upload>
           </div>
-
           {/* User Info */}
           <div className="flex-1">
             <Title level={3} className="m-0! text-slate-900!">

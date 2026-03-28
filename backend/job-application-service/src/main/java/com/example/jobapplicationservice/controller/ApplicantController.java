@@ -5,6 +5,9 @@ import com.example.jobapplicationservice.model.Applicant;
 import com.example.jobapplicationservice.service.ApplicantService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RequestMapping("/api/applicants")
 @RestController
@@ -19,5 +22,13 @@ public class ApplicantController {
     public ResponseEntity<Applicant> updateApplicant(@PathVariable Long applicantId, @RequestBody ApplicantEditDTO applicantEditDTO){
         Applicant updatedApplicant = applicantService.updateApplicant(applicantId, applicantEditDTO);
         return ResponseEntity.ok(updatedApplicant);
+    }
+    @PostMapping("/{id}/upload-photo")
+    public ResponseEntity<String> uploadPhoto(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file
+    ) throws IOException {
+        String imageUrl = applicantService.uploadProfilePhoto(id, file);
+        return ResponseEntity.ok(imageUrl);
     }
 }

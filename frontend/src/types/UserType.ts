@@ -4,4 +4,5 @@ export type User = {
   lastName: string;
   emailAddress: string;
   role: "ADMIN" | "APPLICANT";
+  profileImageUrl?: string;
 };

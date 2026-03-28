@@ -17,4 +17,5 @@ export type AuthResponse = {
   emailAddress: string;
   role: "ADMIN" | "APPLICANT";
   token: string;
+  profileImageUrl?: string;
 };

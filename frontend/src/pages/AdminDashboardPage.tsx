@@ -87,7 +87,15 @@ const AdminDashboardPage: React.FC = () => {
       key: "name",
       render: (_: any, record: any) => (
         <Space>
-          <Avatar icon={<UserOutlined />} className="bg-blue-500" />
+          <Avatar
+            src={
+              record.profileImageUrl
+                ? `http://localhost:8080${record.profileImageUrl}`
+                : undefined
+            }
+            icon={<UserOutlined />}
+            className="bg-blue-500"
+          />
           <Text strong>{`${record.firstName} ${record.lastName}`}</Text>
         </Space>
       ),

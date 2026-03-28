@@ -21,4 +21,20 @@ export const applicantApi = {
     const response = await api.put(`/${id}`, data);
     return response.data;
   },
+  uploadProfileImage: async (userId: number, file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await api.post(
+      `/${userId}/upload-photo`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+
+    return response.data; // imageUrl
+  },
 };

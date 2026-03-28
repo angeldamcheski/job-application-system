@@ -9,4 +9,5 @@ public class ApplicantDTO {
     private String lastName;
     private String emailAddress;
     private String phoneNumber;
+    private String profileImageUrl;
 }
