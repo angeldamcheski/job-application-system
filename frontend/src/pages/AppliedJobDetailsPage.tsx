@@ -139,7 +139,7 @@ const AppliedJobDetailsPage = () => {
         closable
         className="mb-6! rounded-lg! shadow-sm!"
       />
-      <Card className="shadow-lg! border-slate-100! rounded-xl! overflow-hidden!">
+      <Card className="rounded-2xl! border! border-slate-200/60! shadow-sm!">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
             <Title level={2} className="m-0 text-slate-800!">
@@ -183,7 +183,26 @@ const AppliedJobDetailsPage = () => {
             </div>
           </div>
         </div>
+        
+        <div className="mb-4">
+          <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+            <span>Submitted</span>
+            <span>Review</span>
+            <span>Decision</span>
+          </div>
 
+          <div className="flex h-2 rounded-full bg-slate-200 overflow-hidden">
+            <div
+              className={`transition-all duration-500 ${
+                applicationStatus === "SUBMITTED"
+                  ? "w-1/3 bg-blue-500"
+                  : applicationStatus === "IN_REVIEW"
+                    ? "w-2/3 bg-amber-500"
+                    : "w-full bg-green-500"
+              }`}
+            />
+          </div>
+        </div>
         <Divider className="my-8!" />
 
         <div className="prose prose-slate max-w-none">
@@ -205,6 +224,7 @@ const AppliedJobDetailsPage = () => {
             Back to My Applications
           </Button>
         </div>
+        
       </Card>
     </div>
   );

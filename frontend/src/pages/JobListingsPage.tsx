@@ -17,6 +17,7 @@ import JobPostDetails from "../components/JobPostDetails";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthContext";
 import { applicationApi } from "../api/applicationApi";
+import UserSummaryCard from "../components/UserSummaryCard";
 const CreateJobPost = lazy(() => import("../components/CreateJobPost"));
 const { Search } = Input;
 const { Text } = Typography;

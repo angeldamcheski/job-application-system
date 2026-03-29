@@ -18,6 +18,7 @@ import {
   EyeOutlined,
   RightOutlined,
   DownOutlined,
+  UpOutlined,
 } from "@ant-design/icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { adminApi } from "../api/adminApi";
@@ -209,7 +210,7 @@ const AdminDashboardPage: React.FC = () => {
                 </Title>
                 <Button
                   type="default"
-                  icon={metricsOpened ? <DownOutlined /> : <RightOutlined />}
+                  icon={metricsOpened ? <UpOutlined /> : <DownOutlined />}
                   onClick={() => setMetricsOpened((prev) => !prev)}
                   size="middle"
                 ></Button>

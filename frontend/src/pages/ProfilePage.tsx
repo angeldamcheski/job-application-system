@@ -188,9 +188,9 @@ const ProfilePage = () => {
   console.log("User data pfp", user?.lastName);
   console.log("User profile image", user?.profileImageUrl);
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-6">
+    <div className="max-w-5xl  mx-auto p-6 space-y-6">
       <Card
-        className="inset-shadow-sm/20! border! border-neutral-800 bg-neutral-200/20! hover:bg-neutral-200/40! rounded-xl! p-6 mb-6  transition-all! duration-300!"
+        className=" border! border-neutral-800 hover:bg-white/80! rounded-xl! p-6 mb-6  transition-all! duration-300!"
         style={{ marginBottom: 20 }}
       >
         <div className="flex items-center justify-between space-x-4">
@@ -208,7 +208,11 @@ const ProfilePage = () => {
             >
               <Avatar
                 size={80}
-                src={user?.profileImageUrl ? `http://localhost:8080${user.profileImageUrl}` : undefined}
+                src={
+                  user?.profileImageUrl
+                    ? `http://localhost:8080${user.profileImageUrl}`
+                    : undefined
+                }
                 icon={!user?.profileImageUrl && <UserOutlined />}
                 className="cursor-pointer"
               >
